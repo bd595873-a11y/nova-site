@@ -3,249 +3,828 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#080808">
-<title>NOVA | Music</title>
+<meta name="description" content="NOVA Music - اكتشف الموسيقى واستمع إليها">
+<title>NOVA Music</title>
 <style>
+:root{
+  --bg:#080808;--panel:#121212;--panel2:#191919;
+  --line:#292929;--muted:#999;--white:#f5f5f5;
+  --accent:#b6ff45;--danger:#ff6464;
+}
 *{box-sizing:border-box}
-:root{--bg:#080808;--panel:#121212;--muted:#929292;--white:#f5f5f5;--accent:#b6ff45}
-body{margin:0;background:var(--bg);color:var(--white);font-family:Arial,sans-serif;padding-bottom:110px}
+body{
+  margin:0;background:var(--bg);color:var(--white);
+  font-family:Arial,sans-serif;padding-bottom:150px;
+}
 button,input{font:inherit}
 button{cursor:pointer}
-header{height:70px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #242424;position:sticky;top:0;background:#080808ed;z-index:5;backdrop-filter:blur(15px)}
-.logo{font-size:25px;font-weight:900;letter-spacing:3px}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+header{
+  height:68px;padding:0 18px;display:flex;align-items:center;
+  justify-content:space-between;border-bottom:1px solid var(--line);
+  position:sticky;top:0;background:#080808ed;backdrop-filter:blur(16px);
+  z-index:10;
+}
+.logo{font-size:27px;font-weight:900;letter-spacing:3px}
 .logo span{color:var(--accent)}
-.tag{font-size:11px;color:var(--muted);letter-spacing:2px}
-main{max-width:1000px;margin:auto;padding:24px 16px}
-.hero{padding:28px 22px;border:1px solid #292929;border-radius:20px;background:radial-gradient(ellipse at 10% 10%,#29351b 0,transparent 55%),linear-gradient(135deg,#171717,#0b0b0b)}
+.header-right{display:flex;align-items:center;gap:9px}
+.status{font-size:11px;color:var(--muted)}
+.status:before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent);margin-left:6px}
+main{max-width:980px;margin:auto;padding:20px 15px}
+.hero{
+  position:relative;overflow:hidden;padding:28px 22px;
+  border:1px solid #303030;border-radius:22px;
+  background:radial-gradient(ellipse at 8% 12%,#34451c 0,transparent 55%),
+  linear-gradient(135deg,#1b1b1b,#0a0a0a);
+}
 .hero small{color:var(--accent);letter-spacing:3px;font-weight:bold}
-h1{font-size:clamp(32px,8vw,54px);margin:15px 0 10px;line-height:1.15}
-.hero p{color:#aaa;line-height:1.8;font-size:14px;max-width:420px}
-.pill{border:0;background:var(--accent);color:#080808;font-weight:bold;padding:12px 18px;border-radius:30px}
-.section-head{display:flex;justify-content:space-between;align-items:center;margin:30px 0 15px}
+h1{font-size:clamp(36px,8vw,58px);margin:15px 0 8px;line-height:1.08}
+.hero p{color:#aaa;line-height:1.9;font-size:14px;max-width:440px}
+.primary{
+  border:0;background:var(--accent);color:#080808;
+  padding:12px 17px;border-radius:12px;font-weight:bold;
+}
+.btn{
+  border:1px solid #363636;background:#191919;color:white;
+  padding:10px 13px;border-radius:11px;
+}
+.btn.active{border-color:var(--accent);color:var(--accent)}
+.search{display:flex;gap:8px;margin:20px 0 14px}
+.search input{
+  width:100%;min-width:0;background:#141414;border:1px solid #303030;
+  border-radius:12px;padding:14px;color:white;
+}
+.nav{
+  display:flex;gap:8px;overflow-x:auto;padding:3px 0 12px;
+  scrollbar-width:thin;
+}
+.nav button{white-space:nowrap}
+.section-head{
+  display:flex;justify-content:space-between;align-items:center;
+  gap:10px;margin:18px 0 12px;
+}
 h2{font-size:19px;margin:0}
-.muted{color:var(--muted);font-size:12px}
-.search{margin-top:22px;display:flex;gap:10px}
-.search input{min-width:0;flex:1;background:#151515;border:1px solid #292929;color:white;border-radius:12px;padding:14px;outline:none}
-.search input:focus{border-color:var(--accent)}
-.upload{background:#171717;border:1px solid #303030;color:white;border-radius:12px;padding:0 14px}
-.upload input{display:none}
-.filters{display:flex;gap:8px;overflow-x:auto;padding:3px 0 10px}
-.filter{white-space:nowrap;border:1px solid #303030;color:#ccc;background:#111;border-radius:25px;padding:9px 15px;font-size:12px}
-.filter.active{background:var(--accent);color:#080808;border-color:var(--accent)}
-.track{display:flex;align-items:center;gap:13px;padding:12px;border-radius:13px;transition:.2s}
-.track:hover,.track.current{background:#171717}
-.cover{width:52px;height:52px;flex-shrink:0;border-radius:10px;background:linear-gradient(135deg,#262626,#111);display:grid;place-items:center;font-size:23px;border:1px solid #333}
-.track-info{flex:1;min-width:0}
+.muted{font-size:12px;color:var(--muted)}
+.actions{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.track{
+  display:flex;align-items:center;gap:11px;padding:10px;
+  border-radius:13px;border:1px solid transparent;
+}
+.track:hover,.track.current{background:#171717;border-color:#222}
+.cover{
+  width:53px;height:53px;flex-shrink:0;object-fit:cover;
+  border-radius:10px;background:#202020;
+}
+.info{flex:1;min-width:0}
 .track-title{font-size:14px;font-weight:bold;overflow-wrap:anywhere}
 .track-sub{font-size:12px;color:var(--muted);margin-top:6px}
-.play{width:39px;height:39px;border-radius:50%;border:1px solid #393939;background:#222;color:white}
-.track.current .play{background:var(--accent);color:black}
-.empty{text-align:center;padding:35px 15px;color:var(--muted);font-size:13px;line-height:2}
-.notice{color:#777;font-size:11px;line-height:1.8;margin-top:15px}
-footer{position:fixed;bottom:0;left:0;right:0;background:#111e;border-top:1px solid #303030;backdrop-filter:blur(20px);padding:12px 16px calc(12px + env(safe-area-inset-bottom));z-index:10}
-.player{max-width:1000px;margin:auto;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px}
+.track-actions{display:flex;align-items:center;gap:5px}
+.play,.heart{
+  width:38px;height:38px;border-radius:50%;
+  border:1px solid #393939;background:#222;color:white;
+}
+.track.current .play{background:var(--accent);color:#080808}
+.heart{font-size:18px}
+.heart.liked{color:var(--accent);border-color:#526d2b}
+.empty{
+  text-align:center;padding:36px 15px;color:var(--muted);
+  line-height:2;font-size:13px;
+}
+.notice{font-size:11px;color:#777;line-height:1.9;margin-top:20px}
+#message{font-size:12px;color:var(--accent);line-height:1.8;margin:8px 0}
+#message.error{color:var(--danger)}
+footer{
+  position:fixed;bottom:0;left:0;right:0;z-index:20;
+  background:#101010f5;border-top:1px solid #303030;
+  backdrop-filter:blur(20px);
+  padding:10px 14px calc(10px + env(safe-area-inset-bottom));
+}
+.player{max-width:980px;margin:auto}
+.player-top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:center}
 .now{display:flex;align-items:center;gap:10px;min-width:0}
-.now .cover{width:43px;height:43px}
+.now img{width:43px;height:43px;border-radius:9px;object-fit:cover;background:#222}
 .now-text{min-width:0}
 .now-text div{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px}
-.controls{display:flex;align-items:center;justify-content:center;gap:13px}
-.control{border:0;background:transparent;color:white;font-size:19px;padding:5px}
-.control.main{background:var(--accent);color:#080808;width:40px;height:40px;border-radius:50%;font-size:17px}
-.timeline{display:flex;align-items:center;gap:7px;font-size:10px;color:#aaa}
-.timeline input{width:100%;min-width:30px;accent-color:var(--accent)}
-.volume{justify-self:end;width:100%;max-width:115px;accent-color:var(--accent)}
-@media(max-width:520px){
- .tag{display:none}
- .player{grid-template-columns:1fr auto;gap:7px}
- .volume{display:none}
- .controls{gap:5px}
- .now .cover{width:37px;height:37px}
- .timeline{grid-column:1/-1;grid-row:2}
- footer{padding-top:8px}
- .hero{padding:23px 18px}
+.controls{display:flex;align-items:center;gap:5px}
+.control{
+  border:0;background:transparent;color:white;
+  min-width:34px;min-height:38px;font-size:17px;border-radius:9px;
+}
+.control.active{color:var(--accent)}
+.control.main{
+  background:var(--accent);color:#080808;
+  width:42px;height:42px;border-radius:50%;font-size:17px;
+}
+.timeline{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:10px;color:#aaa}
+.timeline input{width:100%;min-width:20px;accent-color:var(--accent)}
+.player-bottom{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:3px}
+.player-bottom label{display:flex;align-items:center;gap:6px;color:#999;font-size:11px}
+.player-bottom input{width:95px;accent-color:var(--accent)}
+@media(min-width:700px){
+  .player-top{grid-template-columns:1fr auto 1fr}
+  .now{grid-column:1}
+  .controls{grid-column:2;grid-row:1}
+  .player-bottom{grid-column:3;grid-row:1;justify-content:flex-end}
+  .player{display:grid;grid-template-columns:1fr}
+}
+@media(max-width:390px){
+  header{padding:0 12px}
+  .status{display:none}
+  main{padding:15px 10px}
+  .hero{padding:23px 17px}
+  .track{gap:8px;padding:8px 4px}
+  .cover{width:45px;height:45px}
+  .play,.heart{width:34px;height:34px}
+  .track-actions{gap:3px}
+  .player-bottom input{width:65px}
 }
 </style>
 </head>
 <body>
+
 <header>
- <div class="logo">NO<span>V</span>A.</div>
- <div class="tag">YOUR SOUND. YOUR WORLD.</div>
+  <div class="logo">NO<span>V</span>A.</div>
+  <div class="header-right">
+    <span class="status">MUSIC DISCOVERY</span>
+  </div>
 </header>
 
 <main>
- <section class="hero">
-  <small>WELCOME TO NOVA</small>
-  <h1>Feel the<br>sound<span style="color:var(--accent)">.</span></h1>
-  <p>مساحتك الخاصة للموسيقى. افتح أغانيك، أنشئ قائمتك، واستمتع بالصوت بتصميم فاخر وبسيط.</p>
-  <button class="pill" onclick="document.getElementById('files').click()">＋ أضف موسيقاك</button>
- </section>
+  <section class="hero">
+    <small>NOVA MUSIC EXPERIENCE</small>
+    <h1>Feel the<br>sound<span style="color:var(--accent)">.</span></h1>
+    <p>اكتشف أصواتًا جديدة، احفظ مقاطعك المفضلة، واستمتع بمكتبتك الموسيقية في مكان واحد.</p>
+    <button class="primary" id="discoverBtn">اكتشف الموسيقى ↗</button>
+  </section>
 
- <div class="search">
-  <input id="search" type="search" placeholder="ابحث عن أغنية في قائمتك..." aria-label="البحث عن أغنية">
-  <label class="upload">＋ ملفات
-   <input id="files" type="file" accept="audio/*" multiple>
-  </label>
- </div>
+  <div class="search">
+    <input id="search" type="search" placeholder="ابحث عن أغنية أو فنان..." aria-label="البحث">
+    <button class="primary" id="searchBtn">بحث</button>
+  </div>
 
- <div class="section-head">
-  <h2>مكتبتك الموسيقية</h2>
-  <span class="muted" id="count">0 أغنية</span>
- </div>
+  <nav class="nav" aria-label="أقسام المكتبة">
+    <button class="btn active" data-view="discover">اكتشف</button>
+    <button class="btn" data-view="favorites">♥ المفضلة</button>
+    <button class="btn" data-view="history">آخر الاستماعات</button>
+    <button class="btn" data-view="local">ملفاتي</button>
+    <button class="btn" id="addFilesBtn">＋ إضافة ملفات</button>
+    <input id="files" type="file" accept="audio/*" multiple hidden>
+  </nav>
 
- <div class="filters">
-  <button class="filter active" data-filter="all">الكل</button>
-  <button class="filter" data-filter="recent">المضافة حديثاً</button>
- </div>
+  <div class="section-head">
+    <h2 id="sectionTitle">اكتشف الموسيقى</h2>
+    <span class="muted" id="count">جار التحميل...</span>
+  </div>
 
- <div id="list">
-  <div class="empty">🎧<br>مكتبتك بانتظار الموسيقى<br>اضغط «أضف موسيقاك» واختر ملفات الصوت من هاتفك.</div>
- </div>
+  <div class="actions">
+    <button class="btn" id="shuffleBtn" aria-pressed="false">⇄ عشوائي: متوقف</button>
+    <button class="btn" id="repeatBtn" aria-pressed="false">⟳ التكرار: متوقف</button>
+    <button class="btn" id="refreshBtn">↻ تحديث</button>
+  </div>
 
- <p class="notice">ملاحظة: هذه النسخة تشغّل ملفات الموسيقى التي تختارها من جهازك. لن تظهر الأغاني تلقائياً من الإنترنت؛ يمكن تطوير الموقع لاحقاً لربطه بمصدر موسيقى قانوني.</p>
+  <div id="message" role="status" aria-live="polite"></div>
+  <div id="list"><div class="empty">🎧<br>جارٍ تحميل المقاطع...</div></div>
+
+  <p class="notice">
+    مصدر المقاطع عبر الإنترنت هو Jamendo. تعتمد الإتاحة على خدمة المصدر وتراخيص المقاطع.
+    المفضلة وسجل الاستماع يُحفظان محليًا في هذا المتصفح، ولا تتم مزامنتهما تلقائيًا مع أجهزة أخرى.
+    ملفات الهاتف لا تُرفع إلى الإنترنت.
+  </p>
 </main>
 
 <footer>
- <div class="player">
-  <div class="now">
-   <div class="cover" id="now-cover">♫</div>
-   <div class="now-text">
-    <div id="now-title">لم تختر أغنية</div>
-    <div id="now-sub" class="muted">NOVA PLAYER</div>
-   </div>
+  <div class="player">
+    <div class="player-top">
+      <div class="now">
+        <img id="nowCover" alt="" src="">
+        <div class="now-text">
+          <div id="nowTitle">اختر مقطعًا للبدء</div>
+          <div id="nowArtist" class="muted">NOVA PLAYER</div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="control" id="prevBtn" aria-label="السابق">⏮</button>
+        <button class="control main" id="playBtn" aria-label="تشغيل">▶</button>
+        <button class="control" id="nextBtn" aria-label="التالي">⏭</button>
+      </div>
+
+      <div class="player-bottom">
+        <label>🔊 <input id="volume" type="range" min="0" max="1" step=".01" value=".8" aria-label="الصوت"></label>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <span id="elapsed">0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" aria-label="تقدم المقطع">
+      <span id="duration">0:00</span>
+    </div>
   </div>
-  <div class="controls">
-   <button class="control" id="prev" aria-label="الأغنية السابقة">⏮</button>
-   <button class="control main" id="toggle" aria-label="تشغيل">▶</button>
-   <button class="control" id="next" aria-label="الأغنية التالية">⏭</button>
-  </div>
-  <input class="volume" id="volume" type="range" min="0" max="1" step=".01" value=".8" aria-label="مستوى الصوت">
-  <div class="timeline">
-   <span id="elapsed">0:00</span>
-   <input id="seek" type="range" min="0" max="1000" value="0" aria-label="موضع الأغنية">
-   <span id="duration">0:00</span>
-  </div>
- </div>
 </footer>
 
 <audio id="audio" preload="metadata"></audio>
 
 <script>
+"use strict";
+
+/* إعدادات التطبيق */
+const CLIENT_ID = "73c579ec";
+const API_URL = "https://api.jamendo.com/v3.0/tracks/";
+const STORAGE = {
+  favorites: "nova_favorites_v1",
+  history: "nova_history_v1",
+  settings: "nova_settings_v1"
+};
+
 const $ = id => document.getElementById(id);
 const audio = $("audio");
-let songs = [];
-let current = -1;
-let filter = "all";
-let objectUrl = null;
 
-function time(seconds){
- if(!Number.isFinite(seconds)) return "0:00";
- return Math.floor(seconds/60)+":"+String(Math.floor(seconds%60)).padStart(2,"0");
+let onlineSongs = [];
+let localSongs = [];
+let favorites = loadStored(STORAGE.favorites, []);
+let historyList = loadStored(STORAGE.history, []);
+let settings = loadStored(STORAGE.settings, {
+  shuffle: false,
+  repeat: "off"
+});
+
+let view = "discover";
+let queue = [];
+let currentSong = null;
+let requestNumber = 0;
+let lastHistoryId = null;
+
+/* تخزين آمن: قد يكون التخزين معطّلًا في بعض المتصفحات */
+function loadStored(key, fallback) {
+  try {
+    const value = localStorage.getItem(key);
+    return value ? JSON.parse(value) : fallback;
+  } catch (error) {
+    console.warn("تعذر قراءة التخزين المحلي:", error);
+    return fallback;
+  }
 }
 
-function addFiles(fileList){
- const files = Array.from(fileList).filter(f =>
-  f.type.startsWith("audio/") || /\.(mp3|m4a|ogg|wav|aac|flac|opus)$/i.test(f.name)
- );
- for(const file of files){
-  songs.push({
-   file,
-   name:file.name.replace(/\.[^.]+$/,""),
-   url:URL.createObjectURL(file),
-   added:Date.now()+Math.random()
+function saveStored(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+    return true;
+  } catch (error) {
+    console.warn("تعذر حفظ البيانات محليًا:", error);
+    showMessage("تعذر الحفظ في المتصفح. قد تكون مساحة التخزين ممتلئة.", true);
+    return false;
+  }
+}
+
+function showMessage(message, isError = false) {
+  const element = $("message");
+  element.textContent = message;
+  element.classList.toggle("error", isError);
+}
+
+function clearMessage() {
+  showMessage("");
+}
+
+function formatTime(seconds) {
+  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return minutes + ":" + String(secs).padStart(2, "0");
+}
+
+function coverFallback() {
+  return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Crect width='100%25' height='100%25' fill='%23191919'/%3E%3Ctext x='50%25' y='62%25' text-anchor='middle' font-size='38' fill='%23b6ff45'%3E%E2%99%AB%3C/text%3E%3C/svg%3E";
+}
+
+function songId(song) {
+  if (song.id != null) return "jamendo:" + song.id;
+  return song.localId || "";
+}
+
+function isFavorite(song) {
+  return favorites.some(item => songId(item) === songId(song));
+}
+
+function getCurrentSource() {
+  if (view === "favorites") return favorites;
+  if (view === "history") return historyList;
+  if (view === "local") return localSongs;
+  return onlineSongs;
+}
+
+function filteredSongs() {
+  const query = $("search").value.trim().toLocaleLowerCase();
+  return getCurrentSource().filter(song => {
+    const name = String(song.name || "").toLocaleLowerCase();
+    const artist = String(song.artist_name || song.artist || "").toLocaleLowerCase();
+    return name.includes(query) || artist.includes(query);
   });
- }
- $("count").textContent=songs.length+" أغنية";
- render();
- if(current===-1 && songs.length) play(0);
 }
 
-function render(){
- const query=$("search").value.trim().toLowerCase();
- const list=$("list");
- list.innerHTML="";
- const visible=songs.map((song,index)=>({...song,index}))
-  .filter(song=>(filter==="all" || true) &&
-   (song.name.toLowerCase().includes(query) || song.file.name.toLowerCase().includes(query)));
- if(!visible.length){
-  list.innerHTML='<div class="empty">لا توجد أغنيات مطابقة.<br>أضف ملفات صوت أو غيّر عبارة البحث.</div>';
-  return;
- }
- visible.forEach(song=>{
-  const row=document.createElement("div");
-  row.className="track"+(song.index===current?" current":"");
-  const cover=document.createElement("div");
-  cover.className="cover";
-  cover.textContent="♫";
-  const info=document.createElement("div");
-  info.className="track-info";
-  const title=document.createElement("div");
-  title.className="track-title";
-  title.textContent=song.name;
-  const sub=document.createElement("div");
-  sub.className="track-sub";
-  sub.textContent="ملف محلي · "+(song.file.size/1048576).toFixed(1)+" MB";
-  info.append(title,sub);
-  const btn=document.createElement("button");
-  btn.className="play";
-  btn.textContent=song.index===current&&!audio.paused?"Ⅱ":"▶";
-  btn.setAttribute("aria-label","تشغيل "+song.name);
-  btn.onclick=()=>song.index===current?toggle():play(song.index);
-  row.append(cover,info,btn);
-  row.onclick=e=>{if(e.target!==btn)play(song.index)};
-  list.append(row);
- });
+/* طلب بيانات الموسيقى من Jamendo */
+async function fetchTracks(query = "") {
+  const id = ++requestNumber;
+  setView("discover", false);
+  showMessage("جارٍ الاتصال بمصدر الموسيقى...");
+  $("count").textContent = "تحميل...";
+  $("list").innerHTML = '<div class="empty">يرجى الانتظار...</div>';
+
+  const params = new URLSearchParams({
+    client_id: CLIENT_ID,
+    format: "json",
+    limit: "40",
+    audioformat: "mp31",
+    imagesize: "100",
+    type: "single albumtrack"
+  });
+
+  if (query) {
+    params.set("search", query);
+  } else {
+    params.set("order", "popularity_week_desc");
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 18000);
+
+  try {
+    const response = await fetch(API_URL + "?" + params.toString(), {
+      method: "GET",
+      signal: controller.signal
+    });
+
+    if (!response.ok) {
+      throw new Error("استجابة الخادم: " + response.status);
+    }
+
+    const data = await response.json();
+
+    if (id !== requestNumber) return;
+
+    if (data.headers && data.headers.status !== "success") {
+      throw new Error(data.headers.error_message || "رفض المصدر الطلب");
+    }
+
+    if (!Array.isArray(data.results)) {
+      throw new Error("صيغة البيانات المستلمة غير متوقعة");
+    }
+
+    onlineSongs = data.results
+      .filter(song => song && song.id && song.audio)
+      .map(song => ({
+        id: String(song.id),
+        name: song.name || "مقطع بلا اسم",
+        artist_name: song.artist_name || "فنان مستقل",
+        audio: song.audio,
+        image: song.image || song.album_image || "",
+        album_image: song.album_image || "",
+        duration: Number(song.duration) || 0,
+        license_ccurl: song.license_ccurl || "",
+        source: "online"
+      }));
+
+    clearMessage();
+    render();
+  } catch (error) {
+    if (id !== requestNumber) return;
+
+    console.error("Jamendo API:", error);
+    const message = error.name === "AbortError"
+      ? "انتهت مهلة الاتصال. تحقق من الإنترنت وحاول مرة أخرى."
+      : "تعذر تحميل المقاطع. تحقق من الاتصال أو إعدادات تطبيق Jamendo.";
+
+    showMessage(message, true);
+    $("count").textContent = "تعذر التحميل";
+    $("list").innerHTML = "";
+    const empty = document.createElement("div");
+    empty.className = "empty";
+    empty.textContent = "لم نتمكن من جلب الموسيقى.";
+    $("list").append(empty);
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
-function play(index){
- if(!songs.length)return;
- current=(index+songs.length)%songs.length;
- if(objectUrl)URL.revokeObjectURL(objectUrl);
- objectUrl=songs[current].url;
- audio.src=objectUrl;
- $("now-title").textContent=songs[current].name;
- $("now-sub").textContent="NOVA · LOCAL MUSIC";
- $("now-cover").textContent="♫";
- audio.play().then(()=>{}).catch(()=>{});
- render();
+/* تبديل الأقسام */
+function setView(nextView, shouldRender = true) {
+  view = nextView;
+
+  document.querySelectorAll("[data-view]").forEach(button => {
+    button.classList.toggle("active", button.dataset.view === view);
+  });
+
+  const titles = {
+    discover: "اكتشف الموسيقى",
+    favorites: "المفضلة",
+    history: "آخر الاستماعات",
+    local: "ملفاتي الموسيقية"
+  };
+
+  $("sectionTitle").textContent = titles[view] || "NOVA Music";
+
+  if (shouldRender) render();
 }
 
-function toggle(){
- if(current===-1){if(songs.length)play(0);return}
- if(audio.paused)audio.play().catch(()=>{});
- else audio.pause();
+/* إنشاء عناصر الواجهة بأمان */
+function render() {
+  const list = $("list");
+  const songs = filteredSongs();
+
+  queue = songs.slice();
+  $("count").textContent = songs.length + (songs.length === 1 ? " مقطع" : " مقاطع");
+  list.replaceChildren();
+
+  if (!songs.length) {
+    const empty = document.createElement("div");
+    empty.className = "empty";
+
+    const messages = {
+      discover: "لا توجد نتائج. ابحث عن اسم أغنية أو فنان.",
+      favorites: "لم تضف أي مقاطع إلى المفضلة بعد.",
+      history: "ستظهر هنا المقاطع التي استمعت إليها.",
+      local: "لم تضف ملفات صوت من هاتفك بعد."
+    };
+
+    empty.textContent = messages[view] || "لا توجد مقاطع لعرضها.";
+    list.append(empty);
+    return;
+  }
+
+  songs.forEach(song => {
+    const row = document.createElement("div");
+    row.className = "track" + (currentSong && songId(song) === songId(currentSong) ? " current" : "");
+
+    const cover = document.createElement("img");
+    cover.className = "cover";
+    cover.alt = "";
+    cover.loading = "lazy";
+    cover.src = song.image || song.album_image || coverFallback();
+    cover.onerror = () => {
+      cover.onerror = null;
+      cover.src = coverFallback();
+    };
+
+    const info = document.createElement("div");
+    info.className = "info";
+
+    const title = document.createElement("div");
+    title.className = "track-title";
+    title.textContent = song.name || "مقطع موسيقي";
+
+    const sub = document.createElement("div");
+    sub.className = "track-sub";
+    sub.textContent = song.source === "local"
+      ? "ملف من جهازك"
+      : (song.artist_name || song.artist || "فنان مستقل") + " · Jamendo";
+
+    info.append(title, sub);
+
+    const actions = document.createElement("div");
+    actions.className = "track-actions";
+
+    if (song.source !== "local") {
+      const heart = document.createElement("button");
+      heart.className = "heart" + (isFavorite(song) ? " liked" : "");
+      heart.textContent = isFavorite(song) ? "♥" : "♡";
+      heart.setAttribute("aria-label", isFavorite(song) ? "إزالة من المفضلة" : "إضافة إلى المفضلة");
+      heart.onclick = event => {
+        event.stopPropagation();
+        toggleFavorite(song);
+      };
+      actions.append(heart);
+    }
+
+    const play = document.createElement("button");
+    play.className = "play";
+    play.textContent = currentSong &&
+      songId(song) === songId(currentSong) && !audio.paused ? "Ⅱ" : "▶";
+    play.setAttribute("aria-label", "تشغيل " + (song.name || "مقطع"));
+    play.onclick = event => {
+      event.stopPropagation();
+      playSong(song);
+    };
+
+    actions.append(play);
+    row.append(cover, info, actions);
+    row.onclick = () => playSong(song);
+    list.append(row);
+  });
 }
 
-$("files").addEventListener("change",e=>{
- addFiles(e.target.files);
- e.target.value="";
-});
-$("search").addEventListener("input",render);
-$("toggle").onclick=toggle;
-$("prev").onclick=()=>{if(current!==-1)play(current-1)};
-$("next").onclick=()=>{if(current!==-1)play(current+1)};
-$("volume").oninput=e=>audio.volume=Number(e.target.value);
-audio.volume=.8;
-audio.onplay=()=>{$("toggle").textContent="Ⅱ";render()};
-audio.onpause=()=>{$("toggle").textContent="▶";render()};
-audio.onended=()=>{if(current<songs.length-1)play(current+1);else{$("toggle").textContent="▶"}};
-audio.ontimeupdate=()=>{
- $("elapsed").textContent=time(audio.currentTime);
- $("duration").textContent=time(audio.duration);
- if(Number.isFinite(audio.duration)&&audio.duration>0)
-  $("seek").value=audio.currentTime/audio.duration*1000;
-};
-$("seek").oninput=e=>{
- if(Number.isFinite(audio.duration))audio.currentTime=Number(e.target.value)/1000*audio.duration;
-};
-document.querySelectorAll(".filter").forEach(btn=>{
- btn.onclick=()=>{
-  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-  filter=btn.dataset.filter;
+/* المفضلة: حفظ بيانات المقاطع عبر المتصفح */
+function toggleFavorite(song) {
+  const id = songId(song);
+  if (!id || song.source === "local") return;
+
+  if (isFavorite(song)) {
+    favorites = favorites.filter(item => songId(item) !== id);
+    showMessage("أُزيل المقطع من المفضلة.");
+  } else {
+    const storedSong = {
+      id: String(song.id),
+      name: song.name,
+      artist_name: song.artist_name || "",
+      audio: song.audio,
+      image: song.image || "",
+      album_image: song.album_image || "",
+      duration: Number(song.duration) || 0,
+      license_ccurl: song.license_ccurl || "",
+      source: "online"
+    };
+    favorites.unshift(storedSong);
+    showMessage("أُضيف المقطع إلى المفضلة ♥");
+  }
+
+  saveStored(STORAGE.favorites, favorites);
   render();
- };
+}
+
+/* سجل الاستماع */
+function addToHistory(song) {
+  if (!song || song.source === "local" || !song.id) return;
+
+  const item = {
+    id: String(song.id),
+    name: song.name || "مقطع موسيقي",
+    artist_name: song.artist_name || "",
+    audio: song.audio,
+    image: song.image || "",
+    album_image: song.album_image || "",
+    duration: Number(song.duration) || 0,
+    license_ccurl: song.license_ccurl || "",
+    source: "online",
+    playedAt: Date.now()
+  };
+
+  historyList = [
+    item,
+    ...historyList.filter(old => songId(old) !== songId(item))
+  ].slice(0, 50);
+
+  saveStored(STORAGE.history, historyList);
+}
+
+/* تشغيل المقطع */
+function playSong(song) {
+  if (!song) return;
+
+  currentSong = song;
+  lastHistoryId = null;
+
+  const url = song.source === "local" ? song.url : song.audio;
+  if (!url) {
+    showMessage("رابط تشغيل هذا المقطع غير متاح.", true);
+    return;
+  }
+
+  audio.src = url;
+  $("nowTitle").textContent = song.name || "موسيقى";
+  $("nowArtist").textContent = song.source === "local"
+    ? "NOVA · ملف محلي"
+    : (song.artist_name || "فنان مستقل") + " · Jamendo";
+
+  $("nowCover").src = song.image || song.album_image || coverFallback();
+  $("nowCover").onerror = () => {
+    $("nowCover").onerror = null;
+    $("nowCover").src = coverFallback();
+  };
+
+  $("elapsed").textContent = "0:00";
+  $("duration").textContent = formatTime(Number(song.duration));
+  $("seek").value = 0;
+  clearMessage();
+
+  audio.play().catch(error => {
+    console.warn("Playback error:", error);
+    showMessage("تعذر تشغيل المقطع. جرّب مقطعًا آخر أو تحقق من الإنترنت.", true);
+  });
+
+  render();
+}
+
+function togglePlayback() {
+  if (!currentSong) {
+    const songs = filteredSongs();
+    if (songs.length) playSong(songs[0]);
+    else showMessage("اختر مقطعًا أولًا.", true);
+    return;
+  }
+
+  if (audio.paused) {
+    audio.play().catch(() => showMessage("تعذر استئناف التشغيل.", true));
+  } else {
+    audio.pause();
+  }
+}
+
+/* العشوائي والتكرار */
+function updatePlaybackButtons() {
+  $("shuffleBtn").classList.toggle("active", !!settings.shuffle);
+  $("shuffleBtn").setAttribute("aria-pressed", String(!!settings.shuffle));
+  $("shuffleBtn").textContent = settings.shuffle ? "⇄ عشوائي: يعمل" : "⇄ عشوائي: متوقف";
+
+  $("repeatBtn").classList.toggle("active", settings.repeat !== "off");
+  $("repeatBtn").setAttribute("aria-pressed", String(settings.repeat !== "off"));
+
+  const labels = {
+    off: "⟳ التكرار: متوقف",
+    all: "⟳ تكرار القائمة",
+    one: "↻ تكرار المقطع"
+  };
+  $("repeatBtn").textContent = labels[settings.repeat] || labels.off;
+}
+
+function nextSong(automatic = false) {
+  if (!queue.length) return;
+
+  if (automatic && settings.repeat === "one") {
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+    return;
+  }
+
+  let nextIndex = queue.findIndex(song =>
+    currentSong && songId(song) === songId(currentSong)
+  );
+
+  if (settings.shuffle && queue.length > 1) {
+    const oldIndex = nextIndex;
+    let candidate = oldIndex;
+    while (candidate === oldIndex) {
+      candidate = Math.floor(Math.random() * queue.length);
+    }
+    nextIndex = candidate;
+  } else {
+    nextIndex += 1;
+  }
+
+  if (nextIndex >= queue.length) {
+    if (settings.repeat === "all") nextIndex = 0;
+    else {
+      audio.pause();
+      audio.currentTime = 0;
+      return;
+    }
+  }
+
+  playSong(queue[nextIndex]);
+}
+
+function previousSong() {
+  if (!queue.length) return;
+
+  if (audio.currentTime > 4) {
+    audio.currentTime = 0;
+    return;
+  }
+
+  let index = queue.findIndex(song =>
+    currentSong && songId(song) === songId(currentSong)
+  );
+
+  index = index <= 0 ? queue.length - 1 : index - 1;
+  playSong(queue[index]);
+}
+
+/* أحداث الواجهة */
+document.querySelectorAll("[data-view]").forEach(button => {
+  button.addEventListener("click", () => {
+    const nextView = button.dataset.view;
+    setView(nextView);
+    if (nextView === "discover" && !onlineSongs.length) fetchTracks();
+  });
 });
+
+$("discoverBtn").onclick = () => {
+  $("search").value = "";
+  fetchTracks();
+};
+
+$("searchBtn").onclick = () => {
+  const query = $("search").value.trim();
+
+  if (view === "discover") {
+    fetchTracks(query);
+  } else {
+    render();
+  }
+};
+
+$("search").addEventListener("keydown", event => {
+  if (event.key === "Enter") $("searchBtn").click();
+});
+
+$("search").addEventListener("input", () => {
+  if (view !== "discover") render();
+});
+
+$("addFilesBtn").onclick = () => $("files").click();
+
+$("files").addEventListener("change", event => {
+  const files = Array.from(event.target.files || []);
+  let added = 0;
+
+  files.forEach(file => {
+    if (
+      file.type.startsWith("audio/") ||
+      /\.(mp3|m4a|ogg|wav|aac|flac|opus)$/i.test(file.name)
+    ) {
+      localSongs.push({
+        localId: "local-" + Date.now() + "-" + Math.random().toString(36).slice(2),
+        name: file.name.replace(/\.[^.]+$/, ""),
+        url: URL.createObjectURL(file),
+        file,
+        source: "local"
+      });
+      added++;
+    }
+  });
+
+  event.target.value = "";
+  setView("local");
+  showMessage(added ? "تمت إضافة " + added + " ملف صوت." : "لم تتم إضافة ملفات صوت صالحة.");
+});
+
+$("shuffleBtn").onclick = () => {
+  settings.shuffle = !settings.shuffle;
+  saveStored(STORAGE.settings, settings);
+  updatePlaybackButtons();
+};
+
+$("repeatBtn").onclick = () => {
+  const modes = ["off", "all", "one"];
+  const index = modes.indexOf(settings.repeat);
+  settings.repeat = modes[(index + 1) % modes.length];
+  saveStored(STORAGE.settings, settings);
+  updatePlaybackButtons();
+};
+
+$("refreshBtn").onclick = () => {
+  if (view === "discover") fetchTracks($("search").value.trim());
+  else render();
+};
+
+$("playBtn").onclick = togglePlayback;
+$("nextBtn").onclick = () => nextSong(false);
+$("prevBtn").onclick = previousSong;
+
+$("volume").addEventListener("input", event => {
+  audio.volume = Number(event.target.value);
+});
+
+audio.volume = Number($("volume").value);
+
+audio.addEventListener("play", () => {
+  $("playBtn").textContent = "Ⅱ";
+  $("playBtn").setAttribute("aria-label", "إيقاف مؤقت");
+
+  if (currentSong && currentSong.source !== "local") {
+    const id = songId(currentSong);
+    if (id !== lastHistoryId) {
+      addToHistory(currentSong);
+      lastHistoryId = id;
+    }
+  }
+
+  render();
+});
+
+audio.addEventListener("pause", () => {
+  $("playBtn").textContent = "▶";
+  $("playBtn").setAttribute("aria-label", "تشغيل");
+  render();
+});
+
+audio.addEventListener("ended", () => nextSong(true));
+
+audio.addEventListener("timeupdate", () => {
+  $("elapsed").textContent = formatTime(audio.currentTime);
+  if (Number.isFinite(audio.duration) && audio.duration > 0) {
+    $("duration").textContent = formatTime(audio.duration);
+    $("seek").value = String(audio.currentTime / audio.duration * 1000);
+  }
+});
+
+audio.addEventListener("loadedmetadata", () => {
+  $("duration").textContent = formatTime(audio.duration);
+});
+
+audio.addEventListener("error", () => {
+  if (currentSong) showMessage("حدث خطأ في ملف الصوت أو رابط البث.", true);
+});
+
+$("seek").addEventListener("input", event => {
+  if (Number.isFinite(audio.duration) && audio.duration > 0) {
+    audio.currentTime = Number(event.target.value) / 1000 * audio.duration;
+  }
+});
+
+/* تهيئة الموقع */
+updatePlaybackButtons();
+fetchTracks();
 </script>
 </body>
 </html>
