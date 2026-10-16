@@ -3,431 +3,659 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#090710">
-<title>NOVA Music</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#090711">
+<title>NOVA Music | استمع إلى ما تحب</title>
 <style>
-:root{--bg:#090710;--panel:#151120;--purple:#a45bff;--pink:#e05bff;--text:#f8f3ff;--muted:#a69ab9;--line:#30233f}
+:root{--bg:#090711;--panel:#12101d;--panel2:#1a1628;--purple:#8b5cf6;--light:#c4b5fd;--text:#f5f3ff;--muted:#a6a0b8;--border:#292239}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(ellipse at 50% 0,#28133e,transparent 48%),var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif;padding-bottom:125px}
+body{margin:0;background:radial-gradient(ellipse at top,#21123c 0,#090711 48%);background-attachment:fixed;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",sans-serif;padding-bottom:100px}
 button,input{font:inherit}
 button{cursor:pointer}
-header{padding:18px 5%;display:flex;align-items:center;justify-content:space-between;gap:12px;position:sticky;top:0;background:#0b0813ed;backdrop-filter:blur(16px);z-index:5;border-bottom:1px solid #ffffff0c}
-.logo{font-size:23px;font-weight:900;letter-spacing:2px}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--light);outline-offset:3px}
+a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:10;background:#0b0913ed;backdrop-filter:blur(16px);border-bottom:1px solid var(--border);padding:13px 16px}
+.top{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:25px;font-weight:900;letter-spacing:1px;color:white}
 .logo span{color:var(--purple)}
-.tagline{font-size:10px;color:var(--muted);letter-spacing:2px}
-.search{width:min(380px,52%);background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:12px;color:white;outline:none}
-.search:focus{border-color:var(--purple)}
-nav{display:flex;gap:8px;padding:15px 5%;overflow:auto}
-nav button,.chip{background:#171120;border:1px solid var(--line);border-radius:12px;padding:10px 15px;color:var(--muted);white-space:nowrap}
-nav button.active,.chip.active{background:#422064;color:white;border-color:var(--purple)}
-main{width:90%;max-width:1250px;margin:auto}
-.hero{position:relative;overflow:hidden;padding:35px 28px;margin:8px 0 28px;border-radius:25px;border:1px solid #7545a766;background:linear-gradient(120deg,#2c1645,#171020 75%)}
-.hero:after{content:"♫";position:absolute;left:6%;top:-65px;font-size:240px;color:#ffffff09}
-.eyebrow{color:#cba4ff;font-size:11px;letter-spacing:3px}
-h1{font-size:clamp(30px,6vw,48px);margin:13px 0}
-.hero p{color:#c2b5d4;line-height:1.9;max-width:520px}
-.primary{background:linear-gradient(120deg,var(--purple),#7135cb);color:white;border:0;border-radius:12px;padding:12px 18px;font-weight:700}
-.secondary{background:var(--panel);color:white;border:1px solid var(--line);padding:10px 14px;border-radius:11px}
-.section{margin:30px 0}
-.heading{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}
-h2{font-size:20px;margin:0}
-.sub{color:var(--muted);font-size:12px;margin-top:6px}
-.chips{display:flex;gap:8px;overflow:auto;margin-bottom:18px;padding-bottom:4px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
-.card{min-width:0;background:linear-gradient(150deg,#1b1527,#100d17);border:1px solid #ffffff0b;border-radius:17px;padding:10px;transition:.2s}
-.card:hover{transform:translateY(-3px);border-color:#7043a0}
-.art{width:100%;aspect-ratio:1;border-radius:12px;background:linear-gradient(135deg,#6b35a0,#171020);object-fit:cover;display:grid;place-items:center;font-size:42px;color:#d5b2ff}
-.tracktitle{font-size:13px;font-weight:750;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin:12px 0 5px;cursor:pointer}
-.artist{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
-.cardfoot{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
-.smallbtn{background:none;border:0;color:#c7b4df;font-size:18px;padding:3px}
-.smallbtn.liked{color:#ff73bd}
-.status,.empty{padding:25px;text-align:center;color:var(--muted);line-height:1.9;border:1px dashed var(--line);border-radius:15px;grid-column:1/-1}
-.player{position:fixed;z-index:10;bottom:0;left:0;right:0;background:#100c19f2;border-top:1px solid #573776;backdrop-filter:blur(20px);padding:12px 4%;display:grid;grid-template-columns:1fr 1.5fr 1fr;gap:15px;align-items:center}
-.now{display:flex;align-items:center;gap:10px;min-width:0}
-.now img{width:48px;height:48px;border-radius:10px;object-fit:cover;background:#28153b}
-.nowtitle{font-size:12px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.nowartist{font-size:11px;color:var(--muted);margin-top:5px}
-.controls{display:flex;justify-content:center;align-items:center;gap:17px}
-.ctrl{background:none;border:0;color:#d4c5e7;font-size:18px}
-.ctrl.active{color:var(--purple)}
-.play{width:39px;height:39px;border-radius:50%;border:0;background:white;color:#171020}
-.progressrow{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:10px;margin-top:9px}
-input[type=range]{width:100%;accent-color:var(--purple);cursor:pointer}
-.volume{display:flex;align-items:center;gap:8px}
-.modalbg{position:fixed;inset:0;background:#000b;z-index:20;display:grid;place-items:center;padding:16px}
-.modal{background:#171120;border:1px solid var(--line);border-radius:18px;padding:22px;width:min(450px,100%);max-height:85vh;overflow:auto}
-.modal input,.modal select,.modal textarea{width:100%;padding:12px;margin:10px 0;background:#0d0914;color:white;border:1px solid var(--line);border-radius:10px}
-.row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:13px;margin:8px 0;background:#21182c;border-radius:12px}
-.row strong{font-size:13px}
-.row small{display:block;color:var(--muted);margin-top:5px}
-.hidden{display:none!important}
-footer{text-align:center;color:#716580;font-size:11px;padding:28px 0}
-@media(max-width:700px){
- header{padding:13px 4%;flex-wrap:wrap}
- .logo{font-size:19px}
- .search{width:100%;order:3}
- nav{padding:12px 4%}
- main{width:92%}
- .hero{padding:25px 19px}
- .hero:after{font-size:160px;top:-30px}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
- .player{grid-template-columns:1fr auto;padding:9px 12px calc(10px + env(safe-area-inset-bottom));gap:8px}
- .now img{width:42px;height:42px}
- .controls{gap:15px}
- .playercenter{grid-column:1/-1;grid-row:2}
- .volume input{display:none}
- .volume{grid-column:2;grid-row:1}
- .player{min-height:100px}
-}
+.pill{border:1px solid #49336e;background:#211634;color:var(--light);padding:6px 10px;border-radius:30px;font-size:12px}
+main{max-width:1100px;margin:auto;padding:20px 15px}
+.hero{padding:25px 20px;border:1px solid #49316c;border-radius:24px;background:linear-gradient(135deg,#24143b,#100d1b 70%);margin-bottom:23px;overflow:hidden}
+.hero h1{font-size:clamp(27px,6vw,43px);margin:0 0 8px}
+.hero h1 span{color:var(--light)}
+.hero p{color:#c5bdd6;margin:0 0 18px}
+.search{display:flex;gap:8px}
+.search input{width:100%;min-width:0;background:#0c0a14;border:1px solid #3b3050;color:white;padding:13px 15px;border-radius:13px}
+.btn{border:0;border-radius:12px;background:var(--purple);color:white;padding:11px 15px;font-weight:700}
+.btn:hover{filter:brightness(1.13)}
+.btn.secondary{background:var(--panel2);border:1px solid var(--border)}
+.btn.small{padding:8px 10px;font-size:13px}
+.nav{display:flex;gap:8px;overflow-x:auto;padding:2px 0 13px;scrollbar-width:thin}
+.nav button,.chip{white-space:nowrap;background:#151120;border:1px solid var(--border);border-radius:22px;padding:9px 13px;color:#d8d1e6}
+.nav button.active,.chip.active{background:#4c267e;border-color:#8b5cf6;color:white}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:23px 0 13px}
+.section-head h2{font-size:20px;margin:0}
+.sub{color:var(--muted);font-size:12px;margin-top:4px}
+.genres{display:flex;gap:8px;overflow-x:auto;padding-bottom:10px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.card{min-width:0;overflow:hidden;background:linear-gradient(150deg,#181424,#100e18);border:1px solid var(--border);border-radius:17px;padding:10px;transition:transform .18s,border-color .18s}
+.card:hover{transform:translateY(-2px);border-color:#65439a}
+.cover{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px;background:#21182f;display:block}
+.track-title{font-size:14px;font-weight:750;margin:10px 0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.artist{font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}
+.card-actions{display:flex;gap:6px;align-items:center;margin-top:10px;flex-wrap:wrap}
+.iconbtn{border:1px solid var(--border);background:#211a30;color:#eee7ff;border-radius:10px;padding:8px;min-height:35px}
+.iconbtn:disabled{opacity:.35;cursor:not-allowed}
+.iconbtn.favorite{color:#fb78b8}
+.playbtn{flex:1;min-width:40px;background:#6d3bc0;border:0;border-radius:10px;color:white;padding:8px;font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:35px 12px;border:1px dashed #443650;border-radius:15px}
+#loadMore{width:100%;margin-top:16px}
+#notice{color:var(--light);font-size:13px;min-height:20px;margin-top:8px}
+.panel{background:#12101d;border:1px solid var(--border);border-radius:17px;padding:15px;margin-top:15px}
+.panel h3{margin:0 0 10px;font-size:17px}
+.row{display:flex;align-items:center;gap:10px}
+.row .grow{flex:1;min-width:0}
+.row img{width:54px;height:54px;object-fit:cover;border-radius:10px}
+.row p{margin:3px 0;color:var(--muted);font-size:12px}
+.trackline{padding:9px 0;border-bottom:1px solid var(--border)}
+.trackline:last-child{border:0}
+.player{position:fixed;z-index:20;bottom:0;left:0;right:0;background:#100d19f5;backdrop-filter:blur(20px);border-top:1px solid #49336b;padding:10px 13px calc(10px + env(safe-area-inset-bottom))}
+.player-inner{max-width:1100px;margin:auto;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 13px;align-items:center}
+.now{display:flex;align-items:center;gap:9px;min-width:0}
+.now img{width:45px;height:45px;object-fit:cover;border-radius:9px;background:#241a35}
+.now-title{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now-artist{font-size:11px;color:var(--muted)}
+.controls{display:flex;align-items:center;gap:6px}
+.controls button{background:transparent;color:white;border:0;font-size:20px;padding:5px}
+.controls .mainplay{background:var(--purple);width:40px;height:40px;border-radius:50%;font-size:17px}
+.timeline{grid-column:1/-1;display:flex;align-items:center;gap:8px;font-size:10px;color:var(--muted)}
+input[type=range]{accent-color:var(--purple);min-width:0}
+#seek{flex:1;width:100%}
+#volume{width:75px}
+footer{max-width:1100px;margin:35px auto 10px;padding:22px 15px;text-align:center;border-top:1px solid var(--border);color:var(--muted);font-size:13px}
+footer .dev{color:white;font-size:19px;font-weight:850;margin:7px}
+.socials{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:13px 0}
+.social{padding:9px 13px;border:1px solid #46305f;border-radius:12px;background:#171121;color:#e4d9ff}
+.social:hover{border-color:var(--purple);background:#26163c}
+footer .legal{font-size:11px;line-height:1.8;max-width:650px;margin:15px auto 0}
+.modal{position:fixed;inset:0;z-index:30;background:#000b;display:none;align-items:center;justify-content:center;padding:16px}
+.modal.show{display:flex}
+.modalbox{width:100%;max-width:520px;max-height:85vh;overflow:auto;background:#151120;border:1px solid #5a3c82;border-radius:20px;padding:18px}
+.modalbox h2{margin-top:0}
+.modalbox pre{white-space:pre-wrap;overflow-wrap:anywhere;color:#ddd4ee;font:inherit;line-height:1.8}
+@media(min-width:560px){.grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hero{padding:32px}}
+@media(min-width:850px){.grid{grid-template-columns:repeat(5,minmax(0,1fr))}.hero{padding:38px}.player-inner{grid-template-columns:1fr auto 1fr}.timeline{grid-column:auto;grid-row:1;grid-column:3}.controls{grid-column:2;grid-row:1}}
 </style>
 </head>
 <body>
 <header>
-  <div>
-    <div class="logo">NOVA <span>MUSIC</span></div>
-    <div class="tagline">YOUR SOUND UNIVERSE</div>
+  <div class="top">
+    <a class="logo" href="#" onclick="goHome();return false">NOVA<span> Music</span></a>
+    <span class="pill">♪ Your sound. Your world.</span>
   </div>
-  <input id="search" class="search" placeholder="ابحث عن أغنية أو فنان..." autocomplete="off">
 </header>
 
-<nav id="nav">
-  <button class="active" data-page="home">⌂ الرئيسية</button>
-  <button data-page="discover">✦ اكتشف</button>
-  <button data-page="favorites">♡ المفضلة</button>
-  <button data-page="playlists">▤ قوائم التشغيل</button>
-  <button data-page="history">◷ السجل</button>
-</nav>
-
-<main id="app">
+<main>
   <section class="hero">
-    <div class="eyebrow">WELCOME TO NOVA</div>
-    <h1>صوتك، <span style="color:#c89aff">عالمك.</span></h1>
-    <p>اكتشف موسيقاك التالية، استكشف فنانين جدد، واجمع الأغاني التي تحبها في مكتبتك الخاصة.</p>
-    <button class="primary" onclick="page('discover')">ابدأ الاكتشاف ✦</button>
+    <h1>اكتشف عالم <span>الموسيقى</span></h1>
+    <p>أغانيك المفضلة، اكتشافات جديدة، وصوتك الخاص.</p>
+    <form class="search" id="searchForm">
+      <input id="searchInput" placeholder="ابحث عن أغنية أو فنان..." autocomplete="off">
+      <button class="btn" type="submit">بحث</button>
+    </form>
+    <div id="notice" aria-live="polite"></div>
   </section>
-  <section class="section">
-    <div class="heading"><h2>اختَر مزاجك</h2></div>
-    <div class="chips" id="genres">
+
+  <nav class="nav" aria-label="التنقل">
+    <button class="active" data-page="home">الرئيسية</button>
+    <button data-page="trending">الأكثر رواجًا</button>
+    <button data-page="favorites">المفضلة ♥</button>
+    <button data-page="history">سجل الاستماع</button>
+    <button data-page="playlists">قوائم التشغيل</button>
+  </nav>
+
+  <div id="genreArea">
+    <div class="section-head"><h2>اكتشف حسب النوع</h2></div>
+    <div class="genres" id="genres">
       <button class="chip active" data-genre="">الكل</button>
-      <button class="chip" data-genre="Electronic">إلكترونية</button>
-      <button class="chip" data-genre="Hip-Hop/Rap">هيب هوب</button>
-      <button class="chip" data-genre="Pop">بوب</button>
-      <button class="chip" data-genre="R&B/Soul">R&B</button>
-      <button class="chip" data-genre="Rock">روك</button>
-      <button class="chip" data-genre="Jazz">جاز</button>
-      <button class="chip" data-genre="Ambient">هادئة</button>
+      <button class="chip" data-genre="electronic">إلكترونية</button>
+      <button class="chip" data-genre="hip-hop">هيب هوب</button>
+      <button class="chip" data-genre="r&b">R&amp;B</button>
+      <button class="chip" data-genre="rock">روك</button>
+      <button class="chip" data-genre="pop">بوب</button>
+      <button class="chip" data-genre="ambient">هادئة</button>
+      <button class="chip" data-genre="classical">كلاسيكية</button>
+      <button class="chip" data-genre="jazz">جاز</button>
     </div>
+  </div>
+
+  <div class="section-head">
+    <div>
+      <h2 id="sectionTitle">أغانٍ مقترحة لك</h2>
+      <div class="sub" id="sectionSub">اكتشف موسيقى جديدة من Audius</div>
+    </div>
+    <button class="btn secondary small" id="refreshBtn">تحديث ↻</button>
+  </div>
+
+  <div id="tracks" class="grid"></div>
+  <button class="btn secondary" id="loadMore">عرض المزيد من الأغاني ↓</button>
+
+  <section class="panel" id="playlistPanel" hidden>
+    <div class="section-head"><h2>قوائم التشغيل الخاصة بك</h2></div>
+    <div class="row">
+      <input id="playlistName" placeholder="اسم قائمة التشغيل" style="flex:1;min-width:0;background:#0c0a14;color:white;border:1px solid #3b3050;border-radius:10px;padding:11px">
+      <button class="btn small" id="createPlaylist">إنشاء</button>
+    </div>
+    <div id="playlistList" style="margin-top:12px"></div>
   </section>
-  <section class="section">
-    <div class="heading"><div><h2 id="sectionTitle">رائج الآن</h2><div class="sub">موسيقى من Audius</div></div><button class="secondary" onclick="loadMusic()">تحديث ↻</button></div>
-    <div id="tracks" class="grid"><div class="status">جارٍ الاتصال بمكتبة الموسيقى...</div></div>
-  </section>
-  <footer>NOVA MUSIC · الموسيقى عبر Audius · مكتبتك محفوظة على جهازك</footer>
 </main>
 
+<footer>
+  <div class="logo">NOVA<span> Music</span></div>
+  <div>تم التطوير بواسطة</div>
+  <div class="dev">ABBAS</div>
+  <div class="socials">
+    <a class="social" href="https://www.instagram.com/977ov/" target="_blank" rel="noopener noreferrer">◎ Instagram · @977ov</a>
+    <a class="social" href="https://www.tiktok.com/@vv66t" target="_blank" rel="noopener noreferrer">♪ TikTok · @vv66t</a>
+  </div>
+  <div>© <span id="year"></span> ABBAS · NOVA Music</div>
+  <div class="legal">NOVA Music واجهة لاكتشاف الموسيقى والاستماع إليها عبر Audius. حقوق الأعمال الموسيقية وأسماؤها وصورها تعود إلى أصحابها. إتاحة التنزيل تعتمد على إعدادات الفنان والمنصة. لا يدّعي المطوّر ملكية المحتوى الموسيقي المعروض.</div>
+</footer>
+
 <div class="player">
-  <div class="now">
-    <img id="nowCover" class="hidden" alt="">
-    <div id="nowFallback" class="art" style="width:44px;min-width:44px;font-size:22px">♫</div>
-    <div style="min-width:0">
-      <div id="nowTitle" class="nowtitle">اختر أغنية للبدء</div>
-      <div id="nowArtist" class="nowartist">NOVA Music</div>
+  <div class="player-inner">
+    <div class="now">
+      <img id="playerCover" alt="" src="https://placehold.co/100x100/21182f/c4b5fd?text=NOVA">
+      <div style="min-width:0">
+        <div class="now-title" id="playerTitle">اختر أغنية للبدء</div>
+        <div class="now-artist" id="playerArtist">NOVA Music</div>
+      </div>
     </div>
-  </div>
-  <div class="playercenter">
     <div class="controls">
-      <button id="shuffle" class="ctrl" title="عشوائي">⤨</button>
-      <button id="prev" class="ctrl" title="السابق">◀|</button>
-      <button id="play" class="play" title="تشغيل">▶</button>
-      <button id="next" class="ctrl" title="التالي">|▶</button>
-      <button id="repeat" class="ctrl" title="تكرار">↻</button>
+      <button id="shuffleBtn" title="تشغيل عشوائي" aria-label="تشغيل عشوائي">⤨</button>
+      <button id="prevBtn" title="السابق" aria-label="السابق">⏮</button>
+      <button class="mainplay" id="playBtn" title="تشغيل أو إيقاف" aria-label="تشغيل">▶</button>
+      <button id="nextBtn" title="التالي" aria-label="التالي">⏭</button>
+      <button id="repeatBtn" title="تكرار" aria-label="تكرار">↻</button>
     </div>
-    <div class="progressrow">
-      <span id="elapsed">0:00</span>
-      <input id="progress" type="range" min="0" max="1000" value="0">
+    <div class="timeline">
+      <span id="currentTime">0:00</span>
+      <input id="seek" type="range" min="0" max="1000" value="0" aria-label="موضع الأغنية">
       <span id="duration">0:00</span>
+      <input id="volume" type="range" min="0" max="1" step=".01" value=".8" aria-label="مستوى الصوت">
     </div>
-  </div>
-  <div class="volume">
-    <button id="mute" class="ctrl" title="كتم الصوت">◖))</button>
-    <input id="volume" type="range" min="0" max="1" step=".01" value=".8">
   </div>
 </div>
 
-<audio id="audio" preload="metadata"></audio>
-<div id="modal"></div>
-<div id="toast" style="display:none;position:fixed;top:15px;left:50%;transform:translateX(-50%);background:#38204e;border:1px solid #8250ad;padding:12px 18px;border-radius:12px;z-index:30"></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true">
+  <div class="modalbox">
+    <div class="section-head"><h2 id="modalTitle">التفاصيل</h2><button class="iconbtn" id="closeModal">✕</button></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<audio id="audio" preload="none" crossorigin="anonymous"></audio>
 
 <script>
-const $=id=>document.getElementById(id);
-const audio=$('audio');
-const API='https://discoveryprovider.audius.co/v1';
-const APP='NOVA_Music';
-let all=[],queue=[],qi=-1,shuffle=false,repeat=0,genre='',currentPage='home';
-let favorites=read('nova_favorites',[]);
-let history=read('nova_history',[]);
-let playlists=read('nova_playlists',[]);
+(() => {
+"use strict";
+const API = "https://discoveryprovider.audius.co/v1";
+const APP = "NOVA_MUSIC";
+const $ = id => document.getElementById(id);
+const audio = $("audio");
 
-function read(k,f){try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}}
-function save(){
- try{
-  localStorage.setItem('nova_favorites',JSON.stringify(favorites));
-  localStorage.setItem('nova_history',JSON.stringify(history));
-  localStorage.setItem('nova_playlists',JSON.stringify(playlists));
- }catch(e){notify('تعذر حفظ البيانات على هذا الجهاز')}
+let page = "home";
+let genre = "";
+let query = "";
+let offset = 0;
+let busy = false;
+let canLoadMore = true;
+let currentTrack = null;
+let queue = [];
+let queueIndex = -1;
+let shuffle = false;
+let repeat = false;
+let allTracks = [];
+let displayedIds = new Set();
+let lastRequest = 0;
+
+let favorites = readStore("nova_favorites", []);
+let history = readStore("nova_history", []);
+let playlists = readStore("nova_playlists", []);
+
+function readStore(key, fallback) {
+  try {
+    const v = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(v) ? v : fallback;
+  } catch { return fallback; }
 }
-function notify(s){
- $('toast').textContent=s;$('toast').style.display='block';
- clearTimeout(window.toastTimer);
- window.toastTimer=setTimeout(()=>$('toast').style.display='none',2300);
+function saveStore(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); }
+  catch { notice("تعذر الحفظ في مساحة التخزين المحلية."); }
 }
-function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function id(t){return String(t?.id||'')}
-function artist(t){return t?.user?.name||'فنان غير معروف'}
-function cover(t){return t?.artwork?.['480x480']||t?.artwork?.['150x150']||t?.user?.profile_picture?.['150x150']||''}
-function time(n){n=Number(n)||0;return Math.floor(n/60)+':'+String(Math.floor(n%60)).padStart(2,'0')}
-function unique(list){let m=new Map();list.forEach(t=>{if(t&&id(t))m.set(id(t),t)});return [...m.values()]}
-function getTrack(x){return all.find(t=>id(t)===String(x))||queue.find(t=>id(t)===String(x))}
-async function request(path,params={}){
- let u=new URL(API+path);
- u.searchParams.set('app_name',APP);
- Object.entries(params).forEach(([k,v])=>{if(v!==''&&v!=null)u.searchParams.set(k,v)});
- let r=await fetch(u);
- if(!r.ok)throw Error('Audius HTTP '+r.status);
- let j=await r.json();
- return j.data||[];
+function notice(text) { $("notice").textContent = text || ""; }
+function safeText(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  }[c]));
 }
-async function loadMusic(g=genre){
- genre=g;
- $('tracks').innerHTML='<div class="status">جارٍ تحميل الموسيقى...</div>';
- try{
-  let d=g
-   ?await request('/tracks/search',{query:g,limit:24,sort_method:'popular'})
-   :await request('/tracks/trending',{limit:24});
-  all=unique([...all,...d]);
-  render(d);
- }catch(e){
-  $('tracks').innerHTML='<div class="status">تعذر الاتصال بـ Audius. تحقق من الإنترنت وحاول مجددًا.<br><br><button class="secondary" onclick="loadMusic()">إعادة المحاولة</button></div>';
- }
+function idOf(t) { return String(t?.id ?? ""); }
+function artwork(t) {
+  const a = t?.artwork;
+  if (typeof a === "string") return a;
+  return a?.["480x480"] || a?.["150x150"] || a?.["1000x1000"] ||
+    "https://placehold.co/400x400/21182f/c4b5fd?text=NOVA";
 }
-function render(list,el=$('tracks')){
- el.innerHTML='';
- if(!list.length){el.innerHTML='<div class="empty">لا توجد نتائج. جرّب بحثًا آخر.</div>';return}
- list.forEach(t=>{
-  const liked=favorites.includes(id(t));
-  const c=document.createElement('article');
-  c.className='card';
-  const image=cover(t);
-  c.innerHTML=`
-   <div class="art">${image?`<img src="${esc(image)}" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:12px">`:'♫'}</div>
-   <div class="tracktitle" title="${esc(t.title)}">${esc(t.title||'بدون عنوان')}</div>
-   <div class="artist" title="${esc(artist(t))}">${esc(artist(t))}</div>
-   <div class="cardfoot">
-    <button class="smallbtn" data-play="${esc(id(t))}" title="تشغيل">▶</button>
-    <div>
-     <button class="smallbtn ${liked?'liked':''}" data-like="${esc(id(t))}" title="المفضلة">${liked?'♥':'♡'}</button>
-     <button class="smallbtn" data-more="${esc(id(t))}" title="المزيد">···</button>
-    </div>
-   </div>`;
-  c.querySelector('.tracktitle').onclick=()=>details(t);
-  c.querySelector('.artist').onclick=()=>artistPage(t);
-  el.appendChild(c);
- });
+function artistName(t) {
+  return t?.user?.name || t?.artist || "فنان غير معروف";
 }
-function playTrack(t,list=all){
- if(!t)return;
- queue=unique(list.length?list:[t]);
- qi=queue.findIndex(x=>id(x)===id(t));
- if(qi<0){queue.unshift(t);qi=0}
- stream(0);
+function duration(t) {
+  const n = Number(t?.duration || 0);
+  return n > 0 ? n : 0;
 }
-async function stream(retry){
- const t=queue[qi];if(!t)return;
- const url=API+'/tracks/'+encodeURIComponent(id(t))+'/stream?app_name='+APP;
- audio.src=url;audio.volume=Number($('volume').value);
- try{
-  await audio.play();
-  $('play').textContent='Ⅱ';
-  $('nowTitle').textContent=t.title||'بدون عنوان';
-  $('nowArtist').textContent=artist(t);
-  const c=cover(t);
-  $('nowCover').classList.toggle('hidden',!c);
-  $('nowFallback').classList.toggle('hidden',!!c);
-  if(c)$('nowCover').src=c;
-  history=[t,...history.filter(x=>id(x)!==id(t))].slice(0,40);
-  all=unique([...all,t]);save();
- }catch(e){
-  if(retry===0){
-   notify('نجرب مصدر البث مرة أخرى...');
-   try{
-    const r=await fetch('https://api.audius.co/v1/tracks/'+encodeURIComponent(id(t))+'/stream?app_name='+APP,{redirect:'follow'});
-    if(r.ok&&r.url){audio.src=r.url;await audio.play();return}
-   }catch(_){}
+function timeFormat(n) {
+  if (!Number.isFinite(n) || n < 0) return "0:00";
+  return Math.floor(n/60) + ":" + String(Math.floor(n%60)).padStart(2,"0");
+}
+function isFavorite(t) { return favorites.some(x => idOf(x) === idOf(t)); }
+function rememberTrack(t) {
+  history = [t, ...history.filter(x => idOf(x) !== idOf(t))].slice(0,60);
+  saveStore("nova_history", history);
+}
+function setPageTitle(title, sub="") {
+  $("sectionTitle").textContent = title;
+  $("sectionSub").textContent = sub;
+}
+function updateNav() {
+  document.querySelectorAll("[data-page]").forEach(b =>
+    b.classList.toggle("active", b.dataset.page === page));
+  $("genreArea").hidden = !["home","trending"].includes(page);
+  $("loadMore").hidden = ["favorites","history","playlists"].includes(page);
+  $("playlistPanel").hidden = page !== "playlists";
+}
+function uniqueTracks(items) {
+  const seen = new Set();
+  return items.filter(t => {
+    const id = idOf(t);
+    if (!id || seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+}
+async function api(path) {
+  const url = new URL(API + path);
+  url.searchParams.set("app_name", APP);
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error("HTTP " + res.status);
+  const json = await res.json();
+  if (json?.data == null) throw new Error("لم ترجع المنصة بيانات.");
+  return json.data;
+}
+function trackEndpoint() {
+  if (query) return "/tracks/search?query=" + encodeURIComponent(query) +
+    "&limit=24&offset=" + offset;
+  if (genre) return "/tracks/search?query=" + encodeURIComponent(genre) +
+    "&limit=24&offset=" + offset;
+  if (page === "trending") return "/tracks/trending?limit=24&offset=" + offset;
+  return "/tracks/trending?limit=24&offset=" + offset;
+}
+async function loadTracks(reset=false) {
+  if (busy) return;
+  if (reset) {
+    offset = 0;
+    canLoadMore = true;
+    displayedIds.clear();
+    allTracks = [];
+    $("tracks").innerHTML = "";
   }
-  $('play').textContent='▶';
-  notify('تعذر تشغيل الأغنية. جرّب أغنية أخرى.');
- }
+  if (!canLoadMore) return;
+  busy = true;
+  $("loadMore").disabled = true;
+  $("loadMore").textContent = "جارٍ تحميل الأغاني…";
+  const requestId = ++lastRequest;
+  try {
+    const data = await api(trackEndpoint());
+    if (requestId !== lastRequest) return;
+    const items = Array.isArray(data) ? data : [];
+    const fresh = items.filter(t => idOf(t) && !displayedIds.has(idOf(t)));
+    fresh.forEach(t => displayedIds.add(idOf(t)));
+    allTracks.push(...fresh);
+    offset += items.length;
+    if (items.length === 0 || items.length < 24 || fresh.length === 0) canLoadMore = false;
+    renderTracks(fresh, reset);
+    if (reset && !fresh.length) $("tracks").innerHTML = '<div class="empty" style="grid-column:1/-1">لم نعثر على أغانٍ. جرّب بحثًا آخر.</div>';
+    notice("");
+  } catch (e) {
+    if (requestId === lastRequest) {
+      notice("تعذر الاتصال بـ Audius. تحقق من الإنترنت ثم حاول مجددًا.");
+      if (reset && !allTracks.length) $("tracks").innerHTML = '<div class="empty" style="grid-column:1/-1">لم نتمكن من تحميل الأغاني الآن.</div>';
+    }
+  } finally {
+    busy = false;
+    $("loadMore").disabled = !canLoadMore;
+    $("loadMore").textContent = canLoadMore ? "عرض المزيد من الأغاني ↓" : "وصلت إلى نهاية النتائج";
+  }
 }
-function next(dir=1){
- if(!queue.length)return;
- if(shuffle&&queue.length>1){
-  let n=qi;while(n===qi)n=Math.floor(Math.random()*queue.length);qi=n;
- }else qi=(qi+dir+queue.length)%queue.length;
- stream(0);
+function renderTracks(items, reset=false) {
+  if (reset) $("tracks").innerHTML = "";
+  const container = $("tracks");
+  if (!reset && !items.length) return;
+  items.forEach(t => {
+    const id = idOf(t);
+    const card = document.createElement("article");
+    card.className = "card";
+    card.innerHTML = `
+      <img class="cover" loading="lazy" src="${safeText(artwork(t))}" alt="غلاف ${safeText(t.title)}">
+      <div class="track-title" title="${safeText(t.title)}">${safeText(t.title || "أغنية بلا عنوان")}</div>
+      <div class="artist" data-artist="${safeText(artistName(t))}">${safeText(artistName(t))}</div>
+      <div class="card-actions">
+        <button class="playbtn" data-action="play" data-id="${safeText(id)}">▶ استمع</button>
+        <button class="iconbtn ${isFavorite(t)?"favorite":""}" data-action="favorite" data-id="${safeText(id)}" title="المفضلة">${isFavorite(t)?"♥":"♡"}</button>
+        <button class="iconbtn" data-action="more" data-id="${safeText(id)}" title="المزيد">⋯</button>
+        ${t.downloadable ? `<a class="iconbtn" href="${API}/tracks/${encodeURIComponent(id)}/download?app_name=${encodeURIComponent(APP)}" target="_blank" rel="noopener noreferrer" title="تنزيل الأغنية" aria-label="تنزيل الأغنية">↓</a>` : `<button class="iconbtn" data-action="no-download" title="التنزيل غير متاح">↓</button>`}
+      </div>`;
+    container.appendChild(card);
+  });
 }
-function toggleLike(t){
- const i=id(t);
- favorites=favorites.includes(i)?favorites.filter(x=>x!==i):[i,...favorites];
- save();notify(favorites.includes(i)?'أُضيفت إلى المفضلة ♥':'أُزيلت من المفضلة');
- if(currentPage==='favorites')page('favorites');else render(all);
+function trackById(id) {
+  return [...allTracks, ...queue, ...favorites, ...history,
+    ...playlists.flatMap(p => p.tracks || [])].find(t => idOf(t) === String(id));
 }
-function details(t){
- $('modal').innerHTML=`<div class="modalbg" id="mb"><div class="modal">
- <h2>${esc(t.title)}</h2><p class="sub">${esc(artist(t))}</p>
- <button class="primary" id="detailPlay">▶ تشغيل</button>
- <button class="secondary" id="detailLike">♡ المفضلة</button>
- <button class="secondary" id="detailArtist">صفحة الفنان</button>
- <button class="secondary" id="detailLyrics">كلمات الأغنية</button>
- <button class="secondary" id="detailSimilar">أغانٍ مشابهة</button>
- <button class="secondary" id="detailClose">إغلاق</button>
- </div></div>`;
- $('detailPlay').onclick=()=>{playTrack(t);closeModal()};
- $('detailLike').onclick=()=>{toggleLike(t);closeModal()};
- $('detailArtist').onclick=()=>{closeModal();artistPage(t)};
- $('detailLyrics').onclick=()=>lyrics(t);
- $('detailSimilar').onclick=()=>{closeModal();search(artist(t))};
- $('detailClose').onclick=closeModal;
- $('mb').onclick=e=>{if(e.target.id==='mb')closeModal()};
+function startQueue(t) {
+  const list = uniqueTracks([t, ...allTracks.filter(x => idOf(x) !== idOf(t))]);
+  queue = list;
+  queueIndex = 0;
+  playTrack(t);
 }
-function closeModal(){$('modal').innerHTML=''}
-async function search(q){
- q=q.trim();if(!q)return;
- currentPage='search';$('sectionTitle').textContent='نتائج البحث';
- $('tracks').innerHTML='<div class="status">جارٍ البحث...</div>';
- try{
-  const d=await request('/tracks/search',{query:q,limit:30,sort_method:'relevance'});
-  all=unique([...all,...d]);render(d);
- }catch(e){$('tracks').innerHTML='<div class="status">تعذر البحث الآن. حاول مجددًا.</div>'}
+function playTrack(t) {
+  if (!t) return;
+  currentTrack = t;
+  if (!queue.length) queue = [t];
+  const idx = queue.findIndex(x => idOf(x) === idOf(t));
+  if (idx >= 0) queueIndex = idx;
+  $("playerTitle").textContent = t.title || "أغنية بلا عنوان";
+  $("playerArtist").textContent = artistName(t);
+  $("playerCover").src = artwork(t);
+  audio.pause();
+  audio.src = `${API}/tracks/${encodeURIComponent(idOf(t))}/stream?app_name=${encodeURIComponent(APP)}`;
+  audio.load();
+  audio.play().then(() => $("playBtn").textContent = "Ⅱ")
+    .catch(() => {
+      $("playBtn").textContent = "▶";
+      notice("تعذر تشغيل هذه الأغنية. جرّب أغنية أخرى أو تحقق من اتصالك.");
+    });
+  rememberTrack(t);
+  renderTracks(allTracks, true);
 }
-function page(p){
- currentPage=p;
- document.querySelectorAll('[data-page]').forEach(b=>b.classList.toggle('active',b.dataset.page===p));
- $('sectionTitle').textContent=({
-  home:'رائج الآن',discover:'اكتشف الموسيقى',
-  favorites:'المفضلة',playlists:'قوائم التشغيل',history:'سجل الاستماع'
- })[p]||p;
- if(p==='home'||p==='discover'){
-  $('genres').classList.toggle('hidden',p!=='home');
-  loadMusic(genre);return;
- }
- $('genres').classList.add('hidden');
- if(p==='favorites'){
-  render(favorites.map(getTrack).filter(Boolean));
-  return;
- }
- if(p==='history'){
-  render(history);return;
- }
- if(p==='playlists'){showPlaylists();return}
+function toggleFavorite(t) {
+  if (!t) return;
+  if (isFavorite(t)) favorites = favorites.filter(x => idOf(x) !== idOf(t));
+  else favorites.unshift(t);
+  saveStore("nova_favorites", favorites);
+  if (page === "favorites") renderSpecial();
+  else renderTracks(allTracks, true);
 }
-function artistPage(t){
- currentPage='artist';$('sectionTitle').textContent=artist(t);
- $('genres').classList.add('hidden');
- $('tracks').innerHTML='<div class="status">جارٍ تحميل أعمال الفنان...</div>';
- request('/tracks/search',{query:artist(t),limit:24}).then(d=>{
-  all=unique([...all,...d]);render(d.filter(x=>artist(x)===artist(t)));
- }).catch(()=>{$('tracks').innerHTML='<div class="status">تعذر تحميل أعمال الفنان.</div>'});
+function renderSpecial() {
+  updateNav();
+  $("tracks").innerHTML = "";
+  let items = [];
+  if (page === "favorites") {
+    setPageTitle("أغانيك المفضلة", "محفوظة على هذا الجهاز");
+    items = favorites;
+  } else if (page === "history") {
+    setPageTitle("سجل الاستماع", "الأغاني التي استمعت إليها مؤخرًا");
+    items = history;
+  } else if (page === "playlists") {
+    setPageTitle("قوائم التشغيل", "أنشئ قوائمك الخاصة");
+    renderPlaylists();
+    return;
+  }
+  if (!items.length) {
+    $("tracks").innerHTML = '<div class="empty" style="grid-column:1/-1">لا توجد أغانٍ هنا حتى الآن.</div>';
+  } else {
+    renderTracks(uniqueTracks(items), true);
+  }
 }
-function showPlaylists(){
- const el=$('tracks');el.innerHTML='';
- const add=document.createElement('button');add.className='primary';add.textContent='＋ إنشاء قائمة';add.onclick=createPlaylist;el.appendChild(add);
- if(!playlists.length){el.insertAdjacentHTML('beforeend','<div class="empty">لا توجد قوائم بعد. أنشئ قائمتك الأولى.</div>');return}
- playlists.forEach((p,i)=>{
-  const row=document.createElement('div');row.className='row';
-  row.innerHTML=`<div><strong>${esc(p.name)}</strong><small>${p.tracks.length} أغنية</small></div><div><button class="secondary" data-open="${i}">فتح</button> <button class="secondary" data-add="${i}">إضافة</button> <button class="secondary" data-delete="${i}">حذف</button></div>`;
-  el.appendChild(row);
- });
+function renderPlaylists() {
+  const root = $("playlistList");
+  root.innerHTML = "";
+  if (!playlists.length) {
+    root.innerHTML = '<div class="empty">لم تنشئ أي قائمة بعد.</div>';
+    return;
+  }
+  playlists.forEach((p, i) => {
+    const box = document.createElement("div");
+    box.className = "trackline";
+    box.innerHTML = `<div class="row"><div class="grow"><strong>${safeText(p.name)}</strong><p>${(p.tracks||[]).length} أغنية</p></div><button class="btn secondary small" data-pl-open="${i}">فتح</button><button class="iconbtn" data-pl-delete="${i}">حذف</button></div>`;
+    root.appendChild(box);
+  });
 }
-function createPlaylist(){
- $('modal').innerHTML=`<div class="modalbg"><div class="modal"><h2>قائمة جديدة</h2><input id="playlistName" maxlength="50" placeholder="اسم قائمة التشغيل"><button id="savePlaylist" class="primary">إنشاء</button> <button class="secondary" onclick="closeModal()">إلغاء</button></div></div>`;
- $('savePlaylist').onclick=()=>{
-  let n=$('playlistName').value.trim();if(!n)return notify('اكتب اسم القائمة');
-  playlists.push({name:n,tracks:[]});save();closeModal();showPlaylists();notify('تم إنشاء القائمة');
- };
+function addToPlaylist(t) {
+  if (!playlists.length) {
+    const name = prompt("اكتب اسم قائمة التشغيل الجديدة:");
+    if (!name?.trim()) return;
+    playlists.push({name:name.trim(),tracks:[t]});
+  } else {
+    const names = playlists.map((p,i) => `${i+1}. ${p.name}`).join("\n");
+    const answer = prompt("اكتب رقم القائمة لإضافة الأغنية:\n" + names + "\nأو اكتب اسم قائمة جديدة.");
+    if (!answer) return;
+    const idx = Number(answer) - 1;
+    if (Number.isInteger(idx) && playlists[idx]) {
+      if (!playlists[idx].tracks.some(x => idOf(x) === idOf(t))) playlists[idx].tracks.push(t);
+    } else {
+      playlists.push({name:answer.trim(),tracks:[t]});
+    }
+  }
+  saveStore("nova_playlists",playlists);
+  notice("تم تحديث قائمة التشغيل.");
 }
-function openPlaylist(i){
- const p=playlists[i];if(!p)return;
- const list=p.tracks.map(getTrack).filter(Boolean);
- $('sectionTitle').textContent=p.name;
- render(list);
- if(!list.length)$('tracks').innerHTML='<div class="empty">القائمة فارغة. حمّل الموسيقى ثم أضف الأغاني إليها.</div>';
+function showModal(title, html) {
+  $("modalTitle").textContent = title;
+  $("modalBody").innerHTML = html;
+  $("modal").classList.add("show");
 }
-function addToPlaylist(t){
- if(!playlists.length){createPlaylist();return}
- $('modal').innerHTML=`<div class="modalbg"><div class="modal"><h2>إضافة إلى قائمة</h2><select id="playlistSelect">${playlists.map((p,i)=>`<option value="${i}">${esc(p.name)}</option>`).join('')}</select><button class="primary" id="confirmAdd">إضافة</button> <button class="secondary" onclick="closeModal()">إلغاء</button></div></div>`;
- $('confirmAdd').onclick=()=>{
-  const p=playlists[Number($('playlistSelect').value)];
-  if(!p.tracks.includes(id(t)))p.tracks.push(id(t));
-  save();closeModal();notify('أُضيفت الأغنية إلى القائمة');
- };
+function openDetails(t) {
+  if (!t) return;
+  const download = t.downloadable
+    ? `<a class="btn" target="_blank" rel="noopener noreferrer" href="${API}/tracks/${encodeURIComponent(idOf(t))}/download?app_name=${encodeURIComponent(APP)}">تنزيل الأغنية ↓</a>`
+    : `<button class="btn secondary" disabled>التنزيل غير متاح من المصدر</button>`;
+  showModal(t.title || "تفاصيل الأغنية", `
+    <div class="row" style="align-items:flex-start">
+      <img src="${safeText(artwork(t))}" alt="" style="width:100px;height:100px">
+      <div class="grow"><strong>${safeText(t.title)}</strong><p>${safeText(artistName(t))}</p><p>المدة: ${timeFormat(duration(t))}</p></div>
+    </div>
+    <div class="card-actions" style="margin:15px 0">
+      <button class="btn" data-modal-play="${safeText(idOf(t))}">▶ تشغيل</button>
+      <button class="btn secondary" data-modal-fav="${safeText(idOf(t))}">${isFavorite(t)?"إزالة من المفضلة":"إضافة للمفضلة"}</button>
+      <button class="btn secondary" data-modal-list="${safeText(idOf(t))}">إضافة لقائمة</button>
+      ${download}
+    </div>
+    <button class="btn secondary" data-lyrics="${safeText(idOf(t))}">عرض كلمات الأغنية</button>
+    <button class="btn secondary" data-similar="${safeText(idOf(t))}">أغانٍ مشابهة</button>
+  `);
 }
-function lyrics(t){
- $('modal').innerHTML=`<div class="modalbg"><div class="modal"><h2>كلمات الأغنية</h2><p class="sub">${esc(t.title)} — ${esc(artist(t))}</p><div id="lyricsText" style="white-space:pre-wrap;line-height:2">جارٍ البحث عن الكلمات...</div><button class="secondary" id="manualLyrics">إدخال الكلمات يدويًا</button> <button class="secondary" onclick="closeModal()">إغلاق</button></div></div>`;
- const endpoint='https://api.lyrics.ovh/v1/'+encodeURIComponent(artist(t))+'/'+encodeURIComponent(t.title||'');
- fetch(endpoint).then(r=>{if(!r.ok)throw Error();return r.json()}).then(d=>{
-  if($('lyricsText'))$('lyricsText').textContent=d.lyrics||'لا توجد كلمات متاحة لهذه الأغنية.';
- }).catch(()=>{if($('lyricsText'))$('lyricsText').textContent='لم نعثر على كلمات متاحة تلقائيًا. يمكنك إدخال الكلمات يدويًا.'});
- $('manualLyrics').onclick=()=>{
-  const box=$('lyricsText');const input=document.createElement('textarea');
-  input.rows=8;input.placeholder='ألصق الكلمات هنا';input.value='';
-  box.replaceWith(input);input.id='lyricsText';
- };
+async function showLyrics(t) {
+  if (!t) return;
+  showModal("كلمات الأغنية", "<p>جارٍ البحث عن الكلمات…</p>");
+  const artist = artistName(t);
+  const title = String(t.title || "").replace(/\(.*?\)|\[.*?\]/g,"").trim();
+  try {
+    const url = `https://api.lyrics.ovh/v1/${encodeURIComponent(artist)}/${encodeURIComponent(title)}`;
+    const res = await fetch(url);
+    if (!res.ok) throw new Error();
+    const data = await res.json();
+    if (!data.lyrics) throw new Error();
+    showModal("كلمات: " + title, `<pre>${safeText(data.lyrics)}</pre><p class="sub">قد لا تتوفر كلمات كل الأغاني.</p>`);
+  } catch {
+    showModal("كلمات الأغنية", "<p>لم نعثر على كلمات متاحة لهذه الأغنية. يمكنك البحث عنها باسم الأغنية والفنان.</p>");
+  }
 }
-document.addEventListener('click',e=>{
- const b=e.target.closest('[data-page]');if(b)page(b.dataset.page);
- const g=e.target.closest('[data-genre]');if(g){
-  document.querySelectorAll('[data-genre]').forEach(x=>x.classList.toggle('active',x===g));
-  loadMusic(g.dataset.genre);
- }
- const pl=e.target.closest('[data-play]');if(pl)playTrack(getTrack(pl.dataset.play));
- const lk=e.target.closest('[data-like]');if(lk)toggleLike(getTrack(lk.dataset.like));
- const more=e.target.closest('[data-more]');if(more){
-  const t=getTrack(more.dataset.more);if(t){details(t)}
- }
- const op=e.target.closest('[data-open]');if(op)openPlaylist(Number(op.dataset.open));
- const ad=e.target.closest('[data-add]');if(ad){
-  const i=Number(ad.dataset.add);
-  const options=all.map(t=>`<option value="${esc(id(t))}">${esc(t.title)}</option>`).join('');
-  $('modal').innerHTML=`<div class="modalbg"><div class="modal"><h2>أضف أغنية</h2><select id="chooseTrack">${options}</select><button class="primary" id="confirmTrack">إضافة</button> <button class="secondary" onclick="closeModal()">إلغاء</button></div></div>`;
-  $('confirmTrack').onclick=()=>{let t=getTrack($('chooseTrack').value);if(t&&!playlists[i].tracks.includes(id(t)))playlists[i].tracks.push(id(t));save();closeModal();showPlaylists();notify('تمت الإضافة')};
- }
- const del=e.target.closest('[data-delete]');if(del&&confirm('حذف هذه القائمة؟')){playlists.splice(Number(del.dataset.delete),1);save();showPlaylists()}
-});
-$('search').addEventListener('keydown',e=>{if(e.key==='Enter')search($('search').value)});
-$('play').onclick=async()=>{
- if(!audio.src){if(queue[qi])stream(0);else notify('اختر أغنية أولًا');return}
- if(audio.paused){try{await audio.play()}catch{notify('تعذر التشغيل')}}else audio.pause();
-};
-audio.onplay=()=>$('play').textContent='Ⅱ';
-audio.onpause=()=>$('play').textContent='▶';
-$('next').onclick=()=>next(1);
-$('prev').onclick=()=>{if(audio.currentTime>3)audio.currentTime=0;else next(-1)};
-$('shuffle').onclick=()=>{shuffle=!shuffle;$('shuffle').classList.toggle('active',shuffle);notify(shuffle?'العشوائي مفعّل':'العشوائي متوقف')};
-$('repeat').onclick=()=>{repeat=(repeat+1)%3;$('repeat').classList.toggle('active',repeat!==0);$('repeat').textContent=repeat===2?'↻¹':'↻';notify(['التكرار متوقف','تكرار القائمة','تكرار الأغنية'][repeat])};
-audio.onended=()=>{if(repeat===2){audio.currentTime=0;audio.play()}else if(queue.length>1||repeat===1)next(1)};
-audio.ontimeupdate=()=>{
- if(!audio.duration)return;
- $('progress').value=audio.currentTime/audio.duration*1000;
- $('elapsed').textContent=time(audio.currentTime);
- $('duration').textContent=time(audio.duration);
-};
-$('progress').oninput=()=>{if(audio.duration)audio.currentTime=$('progress').value/1000*audio.duration};
-$('volume').oninput=()=>audio.volume=Number($('volume').value);
-$('mute').onclick=()=>{audio.muted=!audio.muted;$('mute').textContent=audio.muted?'◖×':'◖))'};
+async function similarTracks(t) {
+  if (!t) return;
+  query = artistName(t);
+  genre = "";
+  page = "home";
+  $("searchInput").value = query;
+  setPageTitle("أغانٍ مشابهة", "نتائج مرتبطة بالفنان: " + query);
+  updateNav();
+  await loadTracks(true);
+}
+async function openArtist(name) {
+  query = name;
+  genre = "";
+  page = "home";
+  $("searchInput").value = name;
+  setPageTitle("أغاني " + name, "الأغاني التي عثرنا عليها للفنان");
+  updateNav();
+  await loadTracks(true);
+}
+function goHome() {
+  page = "home"; query = ""; genre = "";
+  $("searchInput").value = "";
+  document.querySelectorAll("[data-genre]").forEach(b => b.classList.toggle("active", !b.dataset.genre));
+  setPageTitle("أغانٍ مقترحة لك","اكتشف موسيقى جديدة من Audius");
+  updateNav();
+  loadTracks(true);
+}
 
-loadMusic();
+$("tracks").addEventListener("click", e => {
+  const artist = e.target.closest("[data-artist]");
+  if (artist) { openArtist(artist.dataset.artist); return; }
+  const b = e.target.closest("[data-action]");
+  if (!b) return;
+  const t = trackById(b.dataset.id);
+  switch (b.dataset.action) {
+    case "play": if (t) startQueue(t); break;
+    case "favorite": toggleFavorite(t); break;
+    case "more": openDetails(t); break;
+    case "no-download": notice("التنزيل غير متاح لهذه الأغنية وفق إعدادات مصدرها."); break;
+  }
+});
+$("modalBody").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  let t;
+  if (b.dataset.modalPlay) { t=trackById(b.dataset.modalPlay); if(t) startQueue(t); }
+  if (b.dataset.modalFav) { t=trackById(b.dataset.modalFav); toggleFavorite(t); if(t) openDetails(t); }
+  if (b.dataset.modalList) { t=trackById(b.dataset.modalList); addToPlaylist(t); }
+  if (b.dataset.lyrics) showLyrics(trackById(b.dataset.lyrics));
+  if (b.dataset.similar) similarTracks(trackById(b.dataset.similar));
+});
+$("closeModal").onclick = () => $("modal").classList.remove("show");
+$("modal").addEventListener("click",e=>{if(e.target===$("modal"))$("modal").classList.remove("show")});
+
+document.querySelectorAll("[data-page]").forEach(b => b.addEventListener("click", () => {
+  page = b.dataset.page;
+  query = "";
+  genre = "";
+  $("searchInput").value = "";
+  if (page === "home" || page === "trending") {
+    setPageTitle(page === "home" ? "أغانٍ مقترحة لك" : "الأكثر رواجًا",
+      page === "home" ? "اكتشف موسيقى جديدة من Audius" : "الموسيقى الرائجة على Audius");
+    updateNav();
+    loadTracks(true);
+  } else {
+    renderSpecial();
+  }
+}));
+document.querySelectorAll("[data-genre]").forEach(b => b.addEventListener("click", () => {
+  genre = b.dataset.genre;
+  query = "";
+  page = "home";
+  $("searchInput").value = "";
+  document.querySelectorAll("[data-genre]").forEach(x => x.classList.toggle("active",x===b));
+  setPageTitle(genre ? "اكتشف: "+b.textContent : "أغانٍ مقترحة لك","نتائج من Audius");
+  updateNav();
+  loadTracks(true);
+}));
+$("searchForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  query=$("searchInput").value.trim();
+  genre="";
+  page="home";
+  document.querySelectorAll("[data-genre]").forEach(x=>x.classList.toggle("active",!x.dataset.genre));
+  setPageTitle(query ? "نتائج البحث" : "أغانٍ مقترحة لك",query ? "البحث عن: "+query : "اكتشف موسيقى جديدة");
+  updateNav();
+  loadTracks(true);
+});
+$("loadMore").onclick=()=>loadTracks(false);
+$("refreshBtn").onclick=()=>loadTracks(true);
+$("createPlaylist").onclick=()=>{
+  const name=$("playlistName").value.trim();
+  if(!name){notice("اكتب اسم قائمة التشغيل أولًا.");return}
+  playlists.push({name,tracks:[]});
+  saveStore("nova_playlists",playlists);
+  $("playlistName").value="";
+  renderPlaylists();
+  notice("تم إنشاء قائمة التشغيل.");
+};
+$("playlistList").addEventListener("click",e=>{
+  const open=e.target.closest("[data-pl-open]");
+  const del=e.target.closest("[data-pl-delete]");
+  if(del){
+    const i=Number(del.dataset.plDelete);
+    if(confirm("هل تريد حذف قائمة التشغيل؟")){
+      playlists.splice(i,1);saveStore("nova_playlists",playlists);renderPlaylists();
+    }
+  }
+  if(open){
+    const p=playlists[Number(open.dataset.plOpen)];
+    if(!p)return;
+    $("tracks").innerHTML="";
+    setPageTitle(p.name,"أغاني قائمة التشغيل");
+    $("loadMore").hidden=true;
+    if(!p.tracks.length)$("tracks").innerHTML='<div class="empty" style="grid-column:1/-1">القائمة فارغة. أضف الأغاني من زر المزيد ⋯ على بطاقة الأغنية.</div>';
+    else renderTracks(p.tracks,true);
+  }
+});
+
+$("playBtn").onclick=()=>{
+  if(!currentTrack){notice("اختر أغنية أولًا.");return}
+  if(audio.paused) audio.play().then(()=>$("playBtn").textContent="Ⅱ").catch(()=>notice("تعذر تشغيل الأغنية."));
+  else audio.pause();
+};
+audio.addEventListener("play",()=>$("playBtn").textContent="Ⅱ");
+audio.addEventListener("pause",()=>$("playBtn").textContent="▶");
+audio.addEventListener("timeupdate",()=>{
+  $("currentTime").textContent=timeFormat(audio.currentTime);
+  if(Number.isFinite(audio.duration)&&audio.duration>0){
+    $("seek").value=Math.round(audio.currentTime/audio.duration*1000);
+  }
+});
+audio.addEventListener("loadedmetadata",()=>{
+  $("duration").textContent=timeFormat(audio.duration);
+});
+audio.addEventListener("ended",()=>{
+  if(repeat){audio.currentTime=0;audio.play().catch(()=>{});return}
+  nextTrack();
+});
+audio.addEventListener("error",()=>{if(currentTrack)notice("تعذر تشغيل المقطع. جرّب أغنية أخرى.");});
+$("seek").addEventListener("input",()=>{
+  if(Number.isFinite(audio.duration)&&audio.duration>0)audio.currentTime=(Number($("seek").value)/1000)*audio.duration;
+});
+$("volume").addEventListener("input",()=>audio.volume=Number($("volume").value));
+audio.volume=.8;
+$("shuffleBtn").onclick=()=>{shuffle=!shuffle;$("shuffleBtn").style.color=shuffle?"#c4b5fd":"white";notice(shuffle?"التشغيل العشوائي مفعّل":"التشغيل العشوائي متوقف")};
+$("repeatBtn").onclick=()=>{repeat=!repeat;$("repeatBtn").style.color=repeat?"#c4b5fd":"white";notice(repeat?"تكرار الأغنية مفعّل":"تكرار الأغنية متوقف")};
+$("nextBtn").onclick=nextTrack;
+$("prevBtn").onclick=()=>{
+  if(audio.currentTime>3){audio.currentTime=0;return}
+  if(queueIndex>0){queueIndex--;playTrack(queue[queueIndex])}
+  else audio.currentTime=0;
+};
+function nextTrack(){
+  if(!queue.length)return;
+  if(shuffle && queue.length>1){
+    let i=queueIndex;
+    while(i===queueIndex)i=Math.floor(Math.random()*queue.length);
+    queueIndex=i;
+  }else queueIndex=(queueIndex+1)%queue.length;
+  playTrack(queue[queueIndex]);
+}
+$("year").textContent=new Date().getFullYear();
+updateNav();
+loadTracks(true);
+})();
 </script>
 </body>
 </html>
