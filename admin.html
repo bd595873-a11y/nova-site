@@ -1,520 +1,330 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#09090d">
-<title>NOVA Music | لوحة الإدارة</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NOVA Music - لوحة الإدارة</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{color-scheme:dark;--bg:#09090d;--panel:#15151e;--line:#30303d;--purple:#a78bfa;--muted:#aaa9ba}
+:root{color-scheme:dark;--bg:#09090d;--panel:#15141d;--purple:#9b5cff;--text:#f6f2ff;--muted:#aaa4ba;--border:#30283d}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:#f5f3ff;font-family:system-ui,Arial,sans-serif}
-header{padding:22px;background:linear-gradient(120deg,#281647,#101018);border-bottom:1px solid var(--line)}
-.logo{font-size:25px;font-weight:900;letter-spacing:2px;color:#c4b5fd}
-main{max-width:1100px;margin:auto;padding:18px}
-.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:17px;margin:14px 0}
-input,textarea,select,button{font:inherit;padding:11px;border-radius:10px;border:1px solid var(--line);background:#0f0f16;color:#fff;width:100%;margin:5px 0}
-textarea{min-height:90px;resize:vertical}
-button{background:#7950bc;border-color:#7950bc;cursor:pointer}
-button.secondary{background:#20202b;border-color:#414152}
-button.danger{background:#762f42;border-color:#762f42}
-button:disabled{opacity:.5}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-.tabs{display:flex;gap:8px;flex-wrap:wrap}
-.tabs button{width:auto;flex:1;min-width:100px}
-.item{border:1px solid var(--line);padding:12px;border-radius:12px;margin:10px 0;overflow-wrap:anywhere}
-.item h3{margin:4px 0}
-small,.muted{color:var(--muted)}
-label{display:block;margin-top:9px;font-size:14px}
-label input[type=checkbox]{width:auto;margin-left:8px}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,Arial,sans-serif}
+header{padding:22px 16px;background:linear-gradient(120deg,#201035,#0c0b12);border-bottom:1px solid var(--border)}
+h1{margin:0;color:#c5a0ff;font-size:25px}
+header p{margin:7px 0 0;color:var(--muted)}
+main{max-width:1000px;margin:auto;padding:16px}
+.panel{background:var(--panel);border:1px solid var(--border);border-radius:15px;padding:16px;margin-bottom:15px}
+h2{font-size:19px;margin-top:0}
+input,textarea,select,button{font:inherit;width:100%;padding:12px;margin:5px 0;border-radius:9px;border:1px solid var(--border);background:#0d0c13;color:var(--text)}
+button{background:var(--purple);color:white;border:0;font-weight:700;cursor:pointer}
+button.secondary{background:#292331}
+button.danger{background:#8e303e}
+.tabs{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:14px}
+.tabs button{background:#211b2b;font-size:14px}
+.tabs button.active{background:var(--purple)}
+.item{padding:12px 0;border-bottom:1px solid var(--border);overflow-wrap:anywhere}
+.item strong{display:block;margin-bottom:5px}
+.actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}
+.actions button{font-size:13px}
+.muted{color:var(--muted);font-size:13px}
+#message{white-space:pre-wrap;overflow-wrap:anywhere;margin:12px 0;color:#d8c4ff}
 .hidden{display:none!important}
-#message{padding:10px;color:#c4b5fd;white-space:pre-wrap}
-a{color:#c4b5fd}
+label{display:block;margin:9px 0}
+@media(min-width:650px){.tabs{grid-template-columns:repeat(4,minmax(0,1fr))}.fields{display:grid;grid-template-columns:1fr 1fr;gap:8px}}
 </style>
 </head>
 <body>
 <header>
-  <div class="logo">NOVA MUSIC ✦</div>
-  <div class="muted">لوحة تحكم مالك الموقع</div>
+<h1>NOVA Music</h1>
+<p>لوحة الإدارة والتحكم بالمحتوى</p>
 </header>
+
 <main>
-  <div id="message" role="status">جاهز لتسجيل الدخول.</div>
+<div id="message" role="status">جارٍ تجهيز لوحة الإدارة...</div>
 
-  <section id="login" class="panel">
-    <h2>تسجيل دخول المدير</h2>
-    <p class="muted">استخدم حسابك في Supabase الذي أضفته إلى قائمة المديرين.</p>
-    <form id="loginForm">
-      <label>البريد الإلكتروني</label>
-      <input id="email" type="email" autocomplete="username" required>
-      <label>كلمة المرور</label>
-      <input id="password" type="password" autocomplete="current-password" required>
-      <button type="submit">تسجيل الدخول</button>
-    </form>
-  </section>
+<section id="login" class="panel hidden">
+<h2>تسجيل دخول المدير</h2>
+<form id="loginForm">
+<input id="email" type="email" placeholder="البريد الإلكتروني" required autocomplete="username">
+<input id="password" type="password" placeholder="كلمة المرور" required autocomplete="current-password">
+<button type="submit">تسجيل الدخول</button>
+</form>
+</section>
 
-  <section id="dashboard" class="hidden">
-    <div class="panel">
-      <div class="grid">
-        <div><strong>حالة الحساب</strong><p id="account" class="muted"></p></div>
-        <div><strong>إجمالي الأغاني المنشورة</strong><p id="count">—</p></div>
-      </div>
-      <button id="logout" class="secondary">تسجيل الخروج</button>
-      <p><a href="./" target="_blank" rel="noopener">فتح الموقع العام</a></p>
-    </div>
+<section id="dashboard" class="hidden">
+<div class="panel">
+<div>الحساب: <strong id="account"></strong></div>
+<button class="secondary" id="logout">تسجيل الخروج</button>
+</div>
 
-    <nav class="tabs">
-      <button data-tab="tracks">الأغاني</button>
-      <button data-tab="categories">التصنيفات</button>
-      <button data-tab="playlists">القوائم</button>
-      <button data-tab="settings">إعدادات الموقع</button>
-    </nav>
+<nav class="tabs">
+<button data-tab="tracks" class="active">الأغاني</button>
+<button data-tab="categories">التصنيفات</button>
+<button data-tab="playlists">قوائم التشغيل</button>
+<button data-tab="settings">إعدادات الموقع</button>
+</nav>
 
-    <section id="tab-tracks" class="panel">
-      <h2>إدارة الأغاني</h2>
-      <p class="muted">احفظ الأغنية كمسودة، راجع معاينتها، ثم انشرها عند التأكد.</p>
-      <form id="trackForm">
-        <input id="trackId" type="hidden">
-        <label>اسم الأغنية *</label>
-        <input id="title" required maxlength="200">
-        <label>اسم الفنان</label>
-        <input id="artist" value="Unknown" maxlength="200">
-        <label>رابط ملف الصوت *</label>
-        <input id="audioUrl" type="url" required placeholder="https://...">
-        <label>رابط صورة الغلاف</label>
-        <input id="coverUrl" type="url" placeholder="https://...">
-        <label>التصنيف</label>
-        <select id="categoryId"><option value="">بلا تصنيف</option></select>
-        <label>كلمات الأغنية</label>
-        <textarea id="lyrics" placeholder="أدخل كلمات تملك حق نشرها"></textarea>
-        <label><input id="allowDownload" type="checkbox"> السماح بتنزيل هذه الأغنية</label>
-        <label><input id="publishTrack" type="checkbox"> نشر الأغنية للجميع</label>
-        <button type="submit">حفظ الأغنية</button>
-        <button type="button" id="previewTrack" class="secondary">معاينة الأغنية</button>
-        <button type="button" id="clearTrack" class="secondary">تفريغ النموذج</button>
-      </form>
-      <div id="trackPreview" class="item hidden"></div>
-      <hr>
-      <input id="trackSearch" placeholder="البحث في الأغاني..." aria-label="البحث في الأغاني">
-      <div id="trackList"></div>
-    </section>
+<section id="tracks" class="panel tab">
+<h2>إضافة أو تعديل أغنية</h2>
+<form id="trackForm">
+<input id="trackId" type="hidden">
+<input id="trackTitle" placeholder="اسم الأغنية" required>
+<input id="trackArtist" placeholder="اسم الفنان" value="Unknown" required>
+<div class="fields">
+<input id="trackAudio" type="url" placeholder="رابط ملف الصوت" required>
+<input id="trackCover" type="url" placeholder="رابط صورة الغلاف (اختياري)">
+</div>
+<select id="trackCategory"><option value="">بلا تصنيف</option></select>
+<textarea id="trackLyrics" rows="3" placeholder="كلمات الأغنية (اختياري)"></textarea>
+<label><input id="trackPublished" type="checkbox" style="width:auto"> نشر الأغنية</label>
+<label><input id="trackDownload" type="checkbox" style="width:auto"> السماح بتنزيل محتوى تملك حق توزيعه</label>
+<button type="submit">حفظ الأغنية</button>
+<button type="button" class="secondary" id="cancelTrack">إلغاء التعديل</button>
+</form>
+<h2>الأغاني المسجلة</h2>
+<div id="trackList"></div>
+</section>
 
-    <section id="tab-categories" class="panel hidden">
-      <h2>التصنيفات</h2>
-      <form id="categoryForm">
-        <input id="categoryIdEdit" type="hidden">
-        <label>اسم التصنيف</label>
-        <input id="categoryName" required maxlength="100">
-        <label>الرابط المختصر (slug) بالإنجليزية</label>
-        <input id="categorySlug" required pattern="[a-zA-Z0-9_-]+" placeholder="arabic-music">
-        <label><input id="categoryActive" type="checkbox" checked> تصنيف فعال</label>
-        <button type="submit">حفظ التصنيف</button>
-        <button type="button" id="clearCategory" class="secondary">جديد / إلغاء التعديل</button>
-      </form>
-      <div id="categoryList"></div>
-    </section>
+<section id="categories" class="panel tab hidden">
+<h2>إضافة تصنيف</h2>
+<form id="categoryForm">
+<input id="categoryName" placeholder="اسم التصنيف" required>
+<input id="categorySlug" placeholder="المعرّف بالإنجليزية مثل pop" required>
+<button type="submit">إضافة التصنيف</button>
+</form>
+<div id="categoryList"></div>
+</section>
 
-    <section id="tab-playlists" class="panel hidden">
-      <h2>قوائم التشغيل</h2>
-      <form id="playlistForm">
-        <input id="playlistId" type="hidden">
-        <label>اسم القائمة</label>
-        <input id="playlistName" required maxlength="150">
-        <label>الوصف</label>
-        <textarea id="playlistDescription"></textarea>
-        <label>رابط الغلاف</label>
-        <input id="playlistCover" type="url">
-        <label><input id="playlistPublished" type="checkbox"> نشر القائمة</label>
-        <button type="submit">حفظ القائمة</button>
-        <button type="button" id="clearPlaylist" class="secondary">قائمة جديدة</button>
-      </form>
-      <div id="playlistList"></div>
-      <h3>إضافة أغنية إلى قائمة</h3>
-      <form id="addToPlaylist">
-        <label>القائمة</label><select id="linkPlaylist" required></select>
-        <label>الأغنية</label><select id="linkTrack" required></select>
-        <button type="submit">إضافة الأغنية للقائمة</button>
-      </form>
-    </section>
+<section id="playlists" class="panel tab hidden">
+<h2>إنشاء قائمة تشغيل</h2>
+<form id="playlistForm">
+<input id="playlistName" placeholder="اسم القائمة" required>
+<textarea id="playlistDescription" placeholder="وصف القائمة (اختياري)"></textarea>
+<input id="playlistCover" type="url" placeholder="رابط صورة الغلاف (اختياري)">
+<label><input id="playlistPublished" type="checkbox" style="width:auto"> نشر القائمة</label>
+<button type="submit">إنشاء القائمة</button>
+</form>
+<div id="playlistList"></div>
+</section>
 
-    <section id="tab-settings" class="panel hidden">
-      <h2>إعدادات الموقع</h2>
-      <p class="muted">لا تضع كلمات مرور أو مفاتيح سرية هنا. الإعداد العام قد يكون مرئيًا للزوار.</p>
-      <form id="settingForm">
-        <input id="settingId" type="hidden">
-        <label>اسم الإعداد (مفتاح فريد)</label>
-        <input id="settingKey" required maxlength="100" placeholder="site_title">
-        <label>القيمة بصيغة JSON صحيحة</label>
-        <textarea id="settingValue" required>{"text":"NOVA Music"}</textarea>
-        <label><input id="settingPublic" type="checkbox" checked> السماح للزوار بقراءة هذا الإعداد</label>
-        <button type="submit">حفظ الإعداد</button>
-        <button type="button" id="clearSetting" class="secondary">إعداد جديد</button>
-      </form>
-      <div id="settingList"></div>
-    </section>
-  </section>
+<section id="settings" class="panel tab hidden">
+<h2>إعدادات الموقع</h2>
+<p class="muted">تُحفظ الإعدادات بصيغة JSON. تغيير هذه القيم لا يغيّر الصفحة الرئيسية تلقائيًا قبل ربطها بها.</p>
+<form id="settingForm">
+<input id="settingId" type="hidden">
+<input id="settingKey" placeholder="اسم الإعداد مثل site_title" required>
+<textarea id="settingValue" rows="5" placeholder='قيمة JSON مثل "NOVA Music" أو {"color":"purple"}' required></textarea>
+<label><input id="settingPublic" type="checkbox" style="width:auto"> السماح للزوار بقراءة هذا الإعداد</label>
+<button type="submit">حفظ الإعداد</button>
+</form>
+<div id="settingList"></div>
+</section>
+</section>
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-"use strict";
-
 const SUPABASE_URL = "https://xpwhauincfxreytilrda.supabase.co";
 const SUPABASE_KEY = "sb_publishable_Mopifty7o0Sg6hFHi6CoKg_mp6RxV-s";
 const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 const $ = id => document.getElementById(id);
-const say = text => $("message").textContent = text;
-const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({
-  "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-})[c]);
-const safeUrl = value => {
-  try {
-    const u = new URL(value);
-    return ["https:","http:"].includes(u.protocol) ? u.href : "";
-  } catch { return ""; }
-};
-let user = null, tracks = [], categories = [], playlists = [], settings = [];
+let user = null;
+let tracks = [], categories = [], playlists = [], settings = [];
 
-function showDashboard(show) {
-  $("login").classList.toggle("hidden", show);
-  $("dashboard").classList.toggle("hidden", !show);
-}
-function clearTrack() {
-  $("trackForm").reset();
-  $("trackId").value = "";
-  $("artist").value = "Unknown";
-  $("trackPreview").classList.add("hidden");
-}
-function clearCategory() {
-  $("categoryForm").reset();
-  $("categoryIdEdit").value = "";
-  $("categoryActive").checked = true;
-}
-function clearPlaylist() {
-  $("playlistForm").reset();
-  $("playlistId").value = "";
-}
-function clearSetting() {
-  $("settingForm").reset();
-  $("settingId").value = "";
-  $("settingValue").value = '{"text":"NOVA Music"}';
-  $("settingPublic").checked = true;
+function say(message){$("message").textContent=message||""}
+function showLogin(){$("login").classList.remove("hidden");$("dashboard").classList.add("hidden")}
+function showDashboard(){$("login").classList.add("hidden");$("dashboard").classList.remove("hidden")}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function errText(e){return e?.message||String(e||"خطأ غير معروف")}
+async function query(q){const {data,error}=await q;if(error)throw error;return data}
+
+async function verifyAdmin(){
+  const {data:s,error:se}=await db.auth.getSession();
+  if(se)throw se;
+  if(!s.session){user=null;showLogin();say("سجّل الدخول بحساب المدير.");return false}
+  user=s.session.user;
+  const {data:ok,error:ae}=await db.rpc("is_admin");
+  if(ae)throw new Error("تعذر التحقق من صلاحية المدير: "+ae.message);
+  if(ok!==true){await db.auth.signOut();user=null;showLogin();say("هذا الحساب ليس مديرًا.");return false}
+  $("account").textContent=user.email||"مدير";
+  showDashboard();
+  return true;
 }
 
-async function verifyAdmin() {
-  const {data:{session}, error} = await db.auth.getSession();
-  if (error || !session) {
-    user = null;
-    showDashboard(false);
-    return;
-  }
-  user = session.user;
-  const {data, error:adminError} = await db
-    .from("admins").select("user_id").eq("user_id", user.id).maybeSingle();
-  if (adminError || !data) {
-    showDashboard(false);
-    await db.auth.signOut();
-    user = null;
-    say("هذا الحساب ليس مديرًا. تحقق من جدول admins وسياسات RLS.");
-    return;
-  }
-  showDashboard(true);
-  $("account").textContent = user.email || "مدير";
-  await loadAll();
+async function loadAll(){
+  try{
+    say("جارٍ تحميل البيانات...");
+    [tracks,categories,playlists,settings]=await Promise.all([
+      query(db.from("tracks").select("*").order("id",{ascending:false})),
+      query(db.from("categories").select("*").order("id")),
+      query(db.from("playlists").select("*").order("id",{ascending:false})),
+      query(db.from("site_settings").select("*").order("id",{ascending:false}))
+    ]);
+    renderTracks();renderCategories();renderPlaylists();renderSettings();
+    say("تم تحميل البيانات.");
+  }catch(e){say("خطأ في تحميل البيانات:\n"+errText(e))}
 }
 
-$("loginForm").addEventListener("submit", async e => {
+function renderTracks(){
+  $("trackList").innerHTML=tracks.map(t=>`
+  <div class="item"><strong>${esc(t.title)}</strong>
+  <div class="muted">${esc(t.artist)} · ${t.is_published?"منشورة":"مسودة"} · ${t.allow_download?"التنزيل مسموح":"التنزيل ممنوع"}</div>
+  <div class="actions">
+  <button class="secondary" data-edit-track="${t.id}">تعديل</button>
+  <button data-pub-track="${t.id}">${t.is_published?"إلغاء النشر":"نشر"}</button>
+  <button class="secondary" data-dl-track="${t.id}">${t.allow_download?"منع التنزيل":"السماح بالتنزيل"}</button>
+  <button class="danger" data-del-track="${t.id}">حذف</button>
+  </div></div>`).join("")||'<p class="muted">لا توجد أغاني.</p>';
+  $("trackCategory").innerHTML='<option value="">بلا تصنيف</option>'+categories.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+}
+function renderCategories(){
+  $("categoryList").innerHTML=categories.map(c=>`
+  <div class="item"><strong>${esc(c.name)}</strong><div class="muted">${esc(c.slug)} · ${c.is_active?"نشط":"مخفي"}</div>
+  <div class="actions"><button data-toggle-cat="${c.id}">${c.is_active?"إخفاء":"تفعيل"}</button><button class="danger" data-del-cat="${c.id}">حذف</button></div></div>`).join("")||'<p class="muted">لا توجد تصنيفات.</p>';
+}
+function renderPlaylists(){
+  $("playlistList").innerHTML=playlists.map(p=>`
+  <div class="item"><strong>${esc(p.name)}</strong><div class="muted">${p.is_published?"منشورة":"مسودة"}</div>
+  <div class="actions"><button data-toggle-play="${p.id}">${p.is_published?"إلغاء النشر":"نشر"}</button><button class="danger" data-del-play="${p.id}">حذف</button></div></div>`).join("")||'<p class="muted">لا توجد قوائم.</p>';
+}
+function renderSettings(){
+  $("settingList").innerHTML=settings.map(s=>`
+  <div class="item"><strong>${esc(s.setting_key)}</strong><div class="muted">مرئي للزوار: ${s.is_public?"نعم":"لا"}</div>
+  <div class="actions"><button class="secondary" data-edit-setting="${s.id}">تعديل</button><button class="danger" data-del-setting="${s.id}">حذف</button></div></div>`).join("")||'<p class="muted">لا توجد إعدادات.</p>';
+}
+
+$("loginForm").addEventListener("submit",async e=>{
   e.preventDefault();
-  say("جارٍ تسجيل الدخول...");
-  const {error} = await db.auth.signInWithPassword({
-    email:$("email").value.trim(),
-    password:$("password").value
-  });
-  if (error) return say("تعذر تسجيل الدخول: " + error.message);
-  await verifyAdmin();
-  if (user) say("تم تسجيل الدخول بنجاح.");
+  try{
+    say("جارٍ تسجيل الدخول...");
+    const {error}=await db.auth.signInWithPassword({email:$("email").value.trim(),password:$("password").value});
+    if(error)throw error;
+    $("password").value="";
+    if(await verifyAdmin())await loadAll();
+  }catch(e){say("فشل تسجيل الدخول أو التحقق:\n"+errText(e))}
+});
+$("logout").addEventListener("click",async()=>{
+  await db.auth.signOut();user=null;showLogin();say("تم تسجيل الخروج.");
 });
 
-$("logout").onclick = async () => {
-  await db.auth.signOut();
-  user = null;
-  showDashboard(false);
-  say("تم تسجيل الخروج.");
-};
+document.querySelectorAll("[data-tab]").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll("[data-tab]").forEach(x=>x.classList.remove("active"));
+  b.classList.add("active");
+  document.querySelectorAll(".tab").forEach(x=>x.classList.add("hidden"));
+  $(b.dataset.tab).classList.remove("hidden");
+}));
 
-document.querySelectorAll("[data-tab]").forEach(button => {
-  button.onclick = () => {
-    document.querySelectorAll("[id^=tab-]").forEach(s => s.classList.add("hidden"));
-    $("tab-" + button.dataset.tab).classList.remove("hidden");
-  };
+$("trackForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  try{
+    const id=$("trackId").value;
+    const item={
+      title:$("trackTitle").value.trim(),
+      artist:$("trackArtist").value.trim()||"Unknown",
+      audio_url:$("trackAudio").value.trim(),
+      cover_url:$("trackCover").value.trim()||null,
+      lyrics:$("trackLyrics").value||null,
+      category_id:$("trackCategory").value||null,
+      is_published:$("trackPublished").checked,
+      allow_download:$("trackDownload").checked
+    };
+    await query(id?db.from("tracks").update(item).eq("id",id):db.from("tracks").insert(item));
+    $("trackForm").reset();$("trackId").value="";$("trackArtist").value="Unknown";
+    say("تم حفظ الأغنية.");await loadAll();
+  }catch(e){say("تعذر حفظ الأغنية:\n"+errText(e))}
+});
+$("cancelTrack").addEventListener("click",()=>{
+  $("trackForm").reset();$("trackId").value="";$("trackArtist").value="Unknown";
 });
 
-async function loadAll() {
-  say("جارٍ تحميل بيانات الإدارة...");
-  const results = await Promise.all([
-    db.from("tracks").select("*").order("created_at",{ascending:false}),
-    db.from("categories").select("*").order("name"),
-    db.from("playlists").select("*").order("name"),
-    db.from("site_settings").select("id,setting_key,setting_value,is_public").order("id")
-  ]);
-  const error = results.find(r => r.error);
-  if (error) {
-    console.error(error.error);
-    say("تعذر تحميل البيانات. تحقق من الجداول وصلاحيات RLS.");
-    return;
-  }
-  [tracks,categories,playlists,settings] = results.map(r => r.data || []);
-  renderAll();
-  say("تم تحميل البيانات.");
-}
-
-function renderAll() {
-  $("count").textContent = tracks.filter(t => t.is_published).length;
-  $("categoryId").innerHTML = '<option value="">بلا تصنيف</option>' +
-    categories.map(c => `<option value="${c.id}">${esc(c.name)}</option>`).join("");
-  $("linkPlaylist").innerHTML = playlists.map(p =>
-    `<option value="${p.id}">${esc(p.name)}</option>`).join("");
-  $("linkTrack").innerHTML = tracks.map(t =>
-    `<option value="${t.id}">${esc(t.title)} — ${esc(t.artist)}</option>`).join("");
-  renderTracks();
-  renderCategories();
-  renderPlaylists();
-  renderSettings();
-}
-
-function renderTracks() {
-  const q = $("trackSearch").value.toLowerCase().trim();
-  const rows = tracks.filter(t =>
-    `${t.title} ${t.artist}`.toLowerCase().includes(q)
-  );
-  $("trackList").innerHTML = rows.map(t => `
-    <article class="item">
-      <h3>${esc(t.title)}</h3>
-      <small>${esc(t.artist)} · ${t.is_published ? "منشورة" : "مسودة"} · ${t.allow_download ? "التنزيل مسموح" : "التنزيل غير مسموح"}</small>
-      <p>${esc(categories.find(c => c.id === t.category_id)?.name || "بلا تصنيف")}</p>
-      <div class="grid">
-        <button data-edit-track="${t.id}">تعديل</button>
-        <button class="secondary" data-toggle-track="${t.id}">${t.is_published ? "إلغاء النشر" : "نشر"}</button>
-        <button class="danger" data-delete-track="${t.id}">حذف</button>
-      </div>
-    </article>`).join("") || "<p>لا توجد أغنيات.</p>";
-
-  $("trackList").querySelectorAll("[data-edit-track]").forEach(b => b.onclick = () => {
-    const t = tracks.find(x => x.id === Number(b.dataset.editTrack));
-    $("trackId").value = t.id;
-    $("title").value = t.title;
-    $("artist").value = t.artist || "Unknown";
-    $("audioUrl").value = t.audio_url;
-    $("coverUrl").value = t.cover_url || "";
-    $("categoryId").value = t.category_id || "";
-    $("lyrics").value = t.lyrics || "";
-    $("allowDownload").checked = t.allow_download;
-    $("publishTrack").checked = t.is_published;
-    $("tab-tracks").scrollIntoView({behavior:"smooth"});
-  });
-  $("trackList").querySelectorAll("[data-toggle-track]").forEach(b => b.onclick = async () => {
-    const t = tracks.find(x => x.id === Number(b.dataset.toggleTrack));
-    await updateRow("tracks", t.id, {is_published:!t.is_published});
-  });
-  $("trackList").querySelectorAll("[data-delete-track]").forEach(b => b.onclick = async () => {
-    if (!confirm("هل تريد حذف الأغنية؟ قد تتأثر القوائم التي تحتوي عليها.")) return;
-    await deleteRow("tracks", Number(b.dataset.deleteTrack));
-  });
-}
-
-function renderCategories() {
-  $("categoryList").innerHTML = categories.map(c => `
-    <article class="item">
-      <strong>${esc(c.name)}</strong><p class="muted">${esc(c.slug)} · ${c.is_active ? "فعال" : "معطل"}</p>
-      <button data-edit-category="${c.id}">تعديل</button>
-      <button class="danger" data-delete-category="${c.id}">حذف</button>
-    </article>`).join("") || "<p>لا توجد تصنيفات.</p>";
-  $("categoryList").querySelectorAll("[data-edit-category]").forEach(b => b.onclick = () => {
-    const c = categories.find(x => x.id === Number(b.dataset.editCategory));
-    $("categoryIdEdit").value = c.id;
-    $("categoryName").value = c.name;
-    $("categorySlug").value = c.slug;
-    $("categoryActive").checked = c.is_active;
-  });
-  $("categoryList").querySelectorAll("[data-delete-category]").forEach(b => b.onclick = async () => {
-    if (!confirm("حذف التصنيف؟ قد يتطلب الأمر إزالة ارتباط الأغاني به أولًا.")) return;
-    await deleteRow("categories", Number(b.dataset.deleteCategory));
-  });
-}
-
-function renderPlaylists() {
-  $("playlistList").innerHTML = playlists.map(p => `
-    <article class="item">
-      <strong>${esc(p.name)}</strong><p>${esc(p.description || "")}</p>
-      <small>${p.is_published ? "منشورة" : "مسودة"}</small>
-      <button data-edit-playlist="${p.id}">تعديل</button>
-      <button class="secondary" data-toggle-playlist="${p.id}">${p.is_published ? "إلغاء النشر" : "نشر"}</button>
-      <button class="danger" data-delete-playlist="${p.id}">حذف</button>
-    </article>`).join("") || "<p>لا توجد قوائم.</p>";
-  $("playlistList").querySelectorAll("[data-edit-playlist]").forEach(b => b.onclick = () => {
-    const p = playlists.find(x => x.id === Number(b.dataset.editPlaylist));
-    $("playlistId").value = p.id;
-    $("playlistName").value = p.name;
-    $("playlistDescription").value = p.description || "";
-    $("playlistCover").value = p.cover_url || "";
-    $("playlistPublished").checked = p.is_published;
-  });
-  $("playlistList").querySelectorAll("[data-toggle-playlist]").forEach(b => b.onclick = async () => {
-    const p = playlists.find(x => x.id === Number(b.dataset.togglePlaylist));
-    await updateRow("playlists", p.id, {is_published:!p.is_published});
-  });
-  $("playlistList").querySelectorAll("[data-delete-playlist]").forEach(b => b.onclick = async () => {
-    if (!confirm("حذف القائمة؟")) return;
-    await deleteRow("playlists", Number(b.dataset.deletePlaylist));
-  });
-}
-
-function renderSettings() {
-  $("settingList").innerHTML = settings.map(s => `
-    <article class="item">
-      <strong>${esc(s.setting_key)}</strong>
-      <p>${esc(JSON.stringify(s.setting_value))}</p>
-      <small>${s.is_public ? "عام" : "خاص"}</small>
-      <button data-edit-setting="${s.id}">تعديل</button>
-    </article>`).join("") || "<p>لا توجد إعدادات محفوظة.</p>";
-  $("settingList").querySelectorAll("[data-edit-setting]").forEach(b => b.onclick = () => {
-    const s = settings.find(x => x.id === Number(b.dataset.editSetting));
-    $("settingId").value = s.id;
-    $("settingKey").value = s.setting_key;
-    $("settingValue").value = JSON.stringify(s.setting_value, null, 2);
-    $("settingPublic").checked = s.is_public;
-  });
-}
-
-async function updateRow(table,id,values) {
-  const {error} = await db.from(table).update(values).eq("id",id);
-  if (error) return say("فشل التحديث: " + error.message);
-  say("تم التحديث.");
-  await loadAll();
-}
-async function deleteRow(table,id) {
-  const {error} = await db.from(table).delete().eq("id",id);
-  if (error) return say("تعذر الحذف: " + error.message);
-  say("تم الحذف.");
-  await loadAll();
-}
-
-$("trackForm").onsubmit = async e => {
+$("categoryForm").addEventListener("submit",async e=>{
   e.preventDefault();
-  const id = $("trackId").value;
-  const audioUrl = safeUrl($("audioUrl").value.trim());
-  const coverUrl = $("coverUrl").value.trim() ? safeUrl($("coverUrl").value.trim()) : null;
-  if (!audioUrl || ($("coverUrl").value.trim() && !coverUrl))
-    return say("أدخل روابط صحيحة تبدأ بـ https:// أو http://");
-  const values = {
-    title:$("title").value.trim(),
-    artist:$("artist").value.trim() || "Unknown",
-    audio_url:audioUrl,
-    cover_url:coverUrl,
-    category_id:$("categoryId").value ? Number($("categoryId").value) : null,
-    lyrics:$("lyrics").value.trim() || null,
-    allow_download:$("allowDownload").checked,
-    is_published:$("publishTrack").checked
-  };
-  const result = id
-    ? await db.from("tracks").update(values).eq("id",Number(id))
-    : await db.from("tracks").insert(values);
-  if (result.error) return say("تعذر حفظ الأغنية: " + result.error.message);
-  clearTrack();
-  say("تم حفظ الأغنية.");
-  await loadAll();
-};
-
-$("previewTrack").onclick = () => {
-  const box = $("trackPreview");
-  box.classList.remove("hidden");
-  box.innerHTML = `<h3>${esc($("title").value || "اسم الأغنية")}</h3>
-    <p>${esc($("artist").value || "Unknown")}</p>
-    <p>الحالة: ${$("publishTrack").checked ? "ستُنشر" : "مسودة"}</p>
-    <p>التنزيل: ${$("allowDownload").checked ? "مسموح" : "غير مسموح"}</p>`;
-};
-$("clearTrack").onclick = clearTrack;
-$("trackSearch").oninput = renderTracks;
-
-$("categoryForm").onsubmit = async e => {
-  e.preventDefault();
-  const id = $("categoryIdEdit").value;
-  const values = {name:$("categoryName").value.trim(),slug:$("categorySlug").value.trim(),is_active:$("categoryActive").checked};
-  const result = id
-    ? await db.from("categories").update(values).eq("id",Number(id))
-    : await db.from("categories").insert(values);
-  if (result.error) return say("تعذر حفظ التصنيف: " + result.error.message);
-  clearCategory();
-  say("تم حفظ التصنيف.");
-  await loadAll();
-};
-$("clearCategory").onclick = clearCategory;
-
-$("playlistForm").onsubmit = async e => {
-  e.preventDefault();
-  const id = $("playlistId").value;
-  const cover = $("playlistCover").value.trim();
-  const coverUrl = cover ? safeUrl(cover) : null;
-  if (cover && !coverUrl) return say("رابط الغلاف غير صحيح.");
-  const values = {
-    name:$("playlistName").value.trim(),
-    description:$("playlistDescription").value.trim() || null,
-    cover_url:coverUrl,
-    is_published:$("playlistPublished").checked
-  };
-  const result = id
-    ? await db.from("playlists").update(values).eq("id",Number(id))
-    : await db.from("playlists").insert(values);
-  if (result.error) return say("تعذر حفظ القائمة: " + result.error.message);
-  clearPlaylist();
-  say("تم حفظ القائمة.");
-  await loadAll();
-};
-$("clearPlaylist").onclick = clearPlaylist;
-
-$("addToPlaylist").onsubmit = async e => {
-  e.preventDefault();
-  const playlistId = Number($("linkPlaylist").value);
-  const trackId = Number($("linkTrack").value);
-  if (!playlistId || !trackId) return say("اختر قائمة وأغنية.");
-  const {data,error} = await db.from("playlist_tracks")
-    .select("position").eq("playlist_id",playlistId).order("position",{ascending:false}).limit(1);
-  if (error) return say("تعذر قراءة ترتيب القائمة: " + error.message);
-  const position = data.length ? data[0].position + 1 : 0;
-  const result = await db.from("playlist_tracks").insert({playlist_id:playlistId,track_id:trackId,position});
-  if (result.error) return say("تعذرت إضافة الأغنية. ربما هي موجودة في القائمة بالفعل.");
-  say("تمت إضافة الأغنية للقائمة.");
-};
-
-$("settingForm").onsubmit = async e => {
-  e.preventDefault();
-  let value;
-  try { value = JSON.parse($("settingValue").value); }
-  catch { return say("القيمة ليست JSON صالحًا."); }
-  const id = $("settingId").value;
-  const values = {
-    setting_key:$("settingKey").value.trim(),
-    setting_value:value,
-    is_public:$("settingPublic").checked
-  };
-  const result = id
-    ? await db.from("site_settings").update(values).eq("id",Number(id))
-    : await db.from("site_settings").insert(values);
-  if (result.error) return say("تعذر حفظ الإعداد: " + result.error.message);
-  clearSetting();
-  say("تم حفظ الإعداد.");
-  await loadAll();
-};
-$("clearSetting").onclick = clearSetting;
-
-db.auth.onAuthStateChange((event, session) => {
-  if (event === "SIGNED_OUT") {
-    user = null;
-    showDashboard(false);
-  }
+  try{
+    await query(db.from("categories").insert({name:$("categoryName").value.trim(),slug:$("categorySlug").value.trim(),is_active:true}));
+    $("categoryForm").reset();say("تمت إضافة التصنيف.");await loadAll();
+  }catch(e){say("تعذر إضافة التصنيف:\n"+errText(e))}
 });
-verifyAdmin();
+
+$("playlistForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  try{
+    await query(db.from("playlists").insert({
+      name:$("playlistName").value.trim(),
+      description:$("playlistDescription").value.trim()||null,
+      cover_url:$("playlistCover").value.trim()||null,
+      is_published:$("playlistPublished").checked
+    }));
+    $("playlistForm").reset();say("تم إنشاء القائمة.");await loadAll();
+  }catch(e){say("تعذر إنشاء القائمة:\n"+errText(e))}
+});
+
+$("settingForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  try{
+    let value;
+    try{value=JSON.parse($("settingValue").value)}catch{throw new Error("قيمة الإعداد ليست JSON صالحًا.")}
+    const id=$("settingId").value;
+    const item={setting_key:$("settingKey").value.trim(),setting_value:value,is_public:$("settingPublic").checked};
+    await query(id?db.from("site_settings").update(item).eq("id",id):db.from("site_settings").insert(item));
+    $("settingForm").reset();$("settingId").value="";
+    say("تم حفظ الإعداد.");await loadAll();
+  }catch(e){say("تعذر حفظ الإعداد:\n"+errText(e))}
+});
+
+document.addEventListener("click",async e=>{
+  const b=e.target.closest("button");if(!b)return;
+  try{
+    if(b.dataset.editTrack){
+      const t=tracks.find(x=>String(x.id)===b.dataset.editTrack);if(!t)return;
+      $("trackId").value=t.id;$("trackTitle").value=t.title||"";$("trackArtist").value=t.artist||"";
+      $("trackAudio").value=t.audio_url||"";$("trackCover").value=t.cover_url||"";
+      $("trackLyrics").value=t.lyrics||"";$("trackCategory").value=t.category_id||"";
+      $("trackPublished").checked=!!t.is_published;$("trackDownload").checked=!!t.allow_download;
+      window.scrollTo({top:0,behavior:"smooth"});
+    }
+    if(b.dataset.pubTrack){
+      const t=tracks.find(x=>String(x.id)===b.dataset.pubTrack);
+      await query(db.from("tracks").update({is_published:!t.is_published}).eq("id",t.id));await loadAll();
+    }
+    if(b.dataset.dlTrack){
+      const t=tracks.find(x=>String(x.id)===b.dataset.dlTrack);
+      await query(db.from("tracks").update({allow_download:!t.allow_download}).eq("id",t.id));await loadAll();
+    }
+    if(b.dataset.delTrack&&confirm("هل تريد حذف هذه الأغنية؟")){
+      await query(db.from("tracks").delete().eq("id",b.dataset.delTrack));await loadAll();
+    }
+    if(b.dataset.toggleCat){
+      const c=categories.find(x=>String(x.id)===b.dataset.toggleCat);
+      await query(db.from("categories").update({is_active:!c.is_active}).eq("id",c.id));await loadAll();
+    }
+    if(b.dataset.delCat&&confirm("قد يفشل الحذف إذا كان التصنيف مرتبطًا بأغانٍ. هل تتابع؟")){
+      await query(db.from("categories").delete().eq("id",b.dataset.delCat));await loadAll();
+    }
+    if(b.dataset.togglePlay){
+      const p=playlists.find(x=>String(x.id)===b.dataset.togglePlay);
+      await query(db.from("playlists").update({is_published:!p.is_published}).eq("id",p.id));await loadAll();
+    }
+    if(b.dataset.delPlay&&confirm("هل تريد حذف قائمة التشغيل؟")){
+      await query(db.from("playlists").delete().eq("id",b.dataset.delPlay));await loadAll();
+    }
+    if(b.dataset.editSetting){
+      const s=settings.find(x=>String(x.id)===b.dataset.editSetting);if(!s)return;
+      $("settingId").value=s.id;$("settingKey").value=s.setting_key;
+      $("settingValue").value=JSON.stringify(s.setting_value,null,2);
+      $("settingPublic").checked=!!s.is_public;window.scrollTo({top:0,behavior:"smooth"});
+    }
+    if(b.dataset.delSetting&&confirm("هل تريد حذف هذا الإعداد؟")){
+      await query(db.from("site_settings").delete().eq("id",b.dataset.delSetting));await loadAll();
+    }
+  }catch(e){say("تعذر تنفيذ العملية:\n"+errText(e))}
+});
+
+async function start(){
+  try{
+    if(await verifyAdmin())await loadAll();
+  }catch(e){showLogin();say("تعذر تشغيل لوحة الإدارة:\n"+errText(e))}
+}
+start();
 </script>
 </body>
 </html>
