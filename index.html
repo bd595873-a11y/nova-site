@@ -1,706 +1,472 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#090909">
-<meta name="description" content="NOVA Music - اكتشف الموسيقى العربية والعالمية واستمع إلى أغانيك المفضلة">
-<title>NOVA Music | Discover Your Sound</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#111111">
+<meta name="description" content="NOVA Music — اكتشف موسيقاك واستمع إليها.">
+<title>NOVA Music</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --bg:#090909;--panel:#111;--panel2:#181818;
-  --line:#272727;--text:#f6f6f6;--muted:#969696;
-  --accent:#c5a7ff;--green:#b8ff70
+:root {
+  color-scheme: dark;
+  --bg:#101010;
+  --panel:#191919;
+  --panel2:#222222;
+  --silver:#e7e7e7;
+  --muted:#999999;
+  --line:#303030;
+  --accent:#c7c7c7;
 }
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);
-font-family:Arial,"Tahoma",sans-serif;padding-bottom:120px}
-button,input,select{font:inherit}
-button{cursor:pointer}
-button:focus-visible,a:focus-visible,input:focus-visible{
-outline:2px solid var(--accent);outline-offset:3px}
-button:disabled{opacity:.4;cursor:not-allowed}
-a{color:inherit}
-.topbar{position:sticky;top:0;z-index:10;background:#090909ee;
-backdrop-filter:blur(16px);border-bottom:1px solid var(--line);
-padding:14px 5%;display:flex;align-items:center;gap:18px}
-.logo{font-weight:900;font-size:23px;letter-spacing:2px;white-space:nowrap}
-.logo span{color:var(--accent);font-weight:400}
-.search{flex:1;display:flex;gap:8px;max-width:650px}
-.search input{min-width:0;flex:1;background:var(--panel2);border:1px solid var(--line);
-border-radius:13px;color:white;padding:12px 15px}
-.btn{border:1px solid var(--line);background:var(--panel2);color:white;
-border-radius:12px;padding:10px 14px}
-.btn:hover{border-color:#777}
-.primary{background:var(--accent);color:#141019;border:0;font-weight:bold}
-.layout{max-width:1450px;margin:auto;padding:24px 5%;
-display:grid;grid-template-columns:205px minmax(0,1fr);gap:26px}
-.sidebar{position:sticky;top:85px;align-self:start}
-.navbtn{width:100%;text-align:right;padding:13px;border:0;border-radius:11px;
-background:transparent;color:#aaa;margin:3px 0}
-.navbtn.active,.navbtn:hover{background:#202020;color:white}
-.navtitle{font-size:11px;color:#777;margin:25px 12px 8px}
-main{min-width:0}
-.hero{padding:30px;border:1px solid #2a2535;border-radius:22px;
-background:radial-gradient(ellipse at 15% 10%,#39284f 0,transparent 48%),
-linear-gradient(125deg,#17131e,#101010 70%);margin-bottom:28px}
-.eyebrow{color:var(--accent);font-size:12px;letter-spacing:2px}
-.hero h1{font-size:clamp(28px,5vw,48px);margin:13px 0}
-.hero p{color:#bdb7c6;line-height:1.9;max-width:600px}
-.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
-.section{margin:30px 0}
-.section-head{display:flex;justify-content:space-between;align-items:center;
-gap:10px;margin-bottom:15px}
-.section h2{font-size:20px;margin:0}
-.sub{color:var(--muted);font-size:12px;margin-top:7px}
-.chips{display:flex;gap:9px;flex-wrap:wrap;margin:15px 0 25px}
-.chip{background:#141414;color:#bbb;border:1px solid #292929;
-border-radius:99px;padding:9px 14px;white-space:nowrap}
-.chip.active,.chip:hover{background:#d4bfff;color:#151019;border-color:transparent}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:15px}
-.track{background:var(--panel);border:1px solid #202020;border-radius:15px;
-padding:11px;min-width:0;transition:transform .18s,border-color .18s}
-.track:hover{transform:translateY(-3px);border-color:#484848}
-.cover{aspect-ratio:1;background:#202020;border-radius:11px;overflow:hidden;
-position:relative;margin-bottom:11px}
-.cover img{width:100%;height:100%;object-fit:cover;display:block}
-.cover-placeholder{height:100%;display:grid;place-items:center;
-font-size:38px;color:#8b79ac;background:linear-gradient(135deg,#24202d,#111)}
-.playcover{position:absolute;bottom:8px;left:8px;width:39px;height:39px;
-border-radius:50%;border:0;background:var(--accent);font-size:17px}
-.track h3{font-size:14px;margin:0 0 7px;overflow-wrap:anywhere;
-white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.track p{font-size:12px;color:var(--muted);margin:0 0 12px;
-white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.track-actions{display:flex;gap:6px}
-.track-actions button{flex:1;min-width:0;padding:8px 3px;font-size:12px;
-border-radius:9px;background:#1d1d1d;color:#eee;border:1px solid #303030}
-.track-actions button.liked{color:#ff8ba6}
-.empty{padding:28px;border:1px dashed #393939;border-radius:15px;
-text-align:center;color:#999;line-height:1.9}
-.status{font-size:12px;color:var(--muted);margin:12px 0}
-.player{position:fixed;bottom:0;left:0;right:0;z-index:30;
-background:#101010f5;backdrop-filter:blur(18px);
-border-top:1px solid #303030;padding:12px 4% 14px}
-.player-inner{max-width:1450px;margin:auto;display:grid;
-grid-template-columns:1fr 1.5fr 1fr;align-items:center;gap:20px}
-.now{display:flex;align-items:center;gap:11px;min-width:0}
-.now img{width:48px;height:48px;border-radius:9px;object-fit:cover}
-.now .now-cover{width:48px;height:48px;border-radius:9px;
-display:grid;place-items:center;background:#24202d;flex-shrink:0}
-.now-info{min-width:0}
-.now-info strong,.now-info small{display:block;overflow:hidden;
-text-overflow:ellipsis;white-space:nowrap}
-.now-info strong{font-size:13px}
-.now-info small{color:#999;font-size:11px;margin-top:5px}
-.controls{text-align:center}
-.control-buttons{display:flex;align-items:center;justify-content:center;gap:17px}
-.iconbtn{background:none;border:0;color:#ddd;font-size:19px;padding:4px}
-.iconbtn.big{background:var(--accent);color:#111;border-radius:50%;
-width:38px;height:38px;font-size:17px}
-.timebar{display:flex;align-items:center;gap:9px;margin-top:7px;
-font-size:10px;color:#999}
-input[type=range]{accent-color:var(--accent);min-width:0;cursor:pointer}
-#seek{width:100%}
-.volume{display:flex;justify-content:flex-end;align-items:center;gap:10px}
-.volume input{width:min(110px,100%)}
-.modalrow{display:flex;gap:8px;flex-wrap:wrap}
-#fileInput{display:none}
-.footer{margin:45px 0 5px;padding:28px 15px 15px;text-align:center;
-border-top:1px solid #292929;background:#0a0a0a}
-.footer .brand{font-size:23px;font-weight:900;letter-spacing:3px}
-.footer .brand span{color:var(--accent);font-weight:400}
-.footer p{color:#999;font-size:12px;line-height:1.9}
-.socials{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:20px}
-.socials a{border:1px solid #333;border-radius:12px;padding:11px 17px;
-text-decoration:none;font-size:13px}
-.socials a:hover{background:#222}
-.legal{max-width:570px;margin:auto;color:#737373!important}
-.toast{position:fixed;top:75px;left:50%;transform:translateX(-50%);
-background:#252525;border:1px solid #444;border-radius:12px;padding:12px 18px;
-z-index:100;font-size:13px;max-width:90%;text-align:center}
-@media(max-width:900px){
- .layout{grid-template-columns:1fr;padding:18px 4%}
- .sidebar{position:static;display:flex;gap:5px;overflow-x:auto}
- .sidebar .navtitle{display:none}
- .navbtn{white-space:nowrap;width:auto;flex-shrink:0}
- .grid{grid-template-columns:repeat(3,minmax(0,1fr))}
- .player-inner{grid-template-columns:1fr 1.4fr}
- .volume{display:none}
+body{
+  margin:0;background:var(--bg);color:#f4f4f4;
+  font-family:system-ui,-apple-system,"Segoe UI",sans-serif;
+  padding-bottom:115px
 }
-@media(max-width:560px){
- .topbar{padding:12px 4%;gap:10px;flex-wrap:wrap}
- .logo{font-size:19px}
- .search{order:2;flex-basis:100%;max-width:none}
- .layout{padding:14px 4%}
- .hero{padding:23px 18px}
- .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
- .track{padding:8px}
- .track h3{font-size:13px}
- .track-actions button{font-size:11px}
- .player{padding:10px 12px 12px}
- .player-inner{grid-template-columns:1fr;gap:8px}
- .now{justify-content:center}
- .now img,.now .now-cover{width:38px;height:38px}
- .controls{grid-row:2}
- .control-buttons{gap:22px}
- .iconbtn{font-size:17px}
- .iconbtn.big{width:34px;height:34px}
- .timebar{margin-top:4px}
- body{padding-bottom:142px}
- .section h2{font-size:18px}
+button,input{font:inherit}
+button{cursor:pointer}
+a{color:inherit}
+header{
+  position:sticky;top:0;z-index:5;
+  background:#111111ee;backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--line);padding:15px 5%
+}
+.top{display:flex;align-items:center;justify-content:space-between;gap:15px}
+.brand{font-size:23px;font-weight:900;letter-spacing:1px}
+.brand span{color:#aaa}
+.tagline{font-size:12px;color:var(--muted);margin-top:3px}
+.search{margin-top:15px;position:relative}
+.search input{
+  width:100%;padding:13px 15px;border-radius:13px;
+  border:1px solid var(--line);background:#1b1b1b;color:white;outline:none
+}
+.search input:focus{border-color:#888}
+main{max-width:1100px;margin:auto;padding:22px 5%}
+nav{display:flex;gap:9px;overflow-x:auto;padding:3px 0 16px}
+nav button,.chip{
+  flex-shrink:0;border:1px solid var(--line);background:var(--panel);
+  color:#ddd;border-radius:30px;padding:9px 15px
+}
+nav button.active,.chip.active{background:var(--silver);color:#111;border-color:var(--silver)}
+.hero{
+  border:1px solid #383838;border-radius:22px;padding:26px 22px;
+  background:linear-gradient(125deg,#303030,#171717 62%,#111);
+  margin-bottom:27px
+}
+.eyebrow{color:#aaa;font-size:12px;letter-spacing:2px}
+.hero h1{font-size:clamp(27px,5vw,44px);line-height:1.25;margin:10px 0}
+.hero p{color:#b7b7b7;max-width:460px;font-size:14px;line-height:1.9}
+.primary{
+  border:0;border-radius:10px;background:#ededed;color:#111;
+  padding:11px 17px;font-weight:750
+}
+.section{margin-top:28px}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:15px}
+.section h2{font-size:19px;margin:0}
+.sub{font-size:12px;color:var(--muted);margin-top:5px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:2px 0 8px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.card{min-width:0;background:var(--panel);border:1px solid var(--line);border-radius:15px;overflow:hidden}
+.cover{
+  width:100%;aspect-ratio:1;object-fit:cover;display:block;
+  background:linear-gradient(135deg,#333,#151515)
+}
+.cover-placeholder{
+  aspect-ratio:1;display:grid;place-items:center;
+  background:linear-gradient(135deg,#333,#161616);font-size:34px;color:#aaa
+}
+.card-body{padding:11px}
+.track-title{font-weight:750;font-size:14px;overflow-wrap:anywhere}
+.artist{font-size:12px;color:var(--muted);margin-top:5px;overflow-wrap:anywhere}
+.actions{display:flex;align-items:center;gap:7px;margin-top:11px}
+.icon-btn{
+  min-width:36px;min-height:36px;border:1px solid var(--line);
+  background:#252525;color:#eee;border-radius:10px;padding:7px
+}
+.icon-btn:disabled{opacity:.35;cursor:not-allowed}
+.play-btn{flex:1;border:0;background:#e7e7e7;color:#111;border-radius:10px;padding:9px;font-weight:700}
+.empty,.notice{
+  border:1px dashed #404040;border-radius:14px;padding:22px;
+  color:#aaa;text-align:center;line-height:1.9
+}
+.status{font-size:12px;color:#aaa;margin:12px 0}
+.status.error{color:#ff9999}
+.playlist-card{padding:14px;cursor:pointer}
+.playlist-card:active{background:#292929}
+.playlist-symbol{font-size:25px;margin-bottom:9px}
+footer{padding:28px 5%;text-align:center;color:#777;font-size:12px}
+.player{
+  position:fixed;bottom:0;left:0;right:0;z-index:10;
+  background:#171717f5;backdrop-filter:blur(16px);
+  border-top:1px solid #393939;padding:12px 5% calc(12px + env(safe-area-inset-bottom))
+}
+.player-inner{max-width:1100px;margin:auto}
+.now{display:flex;align-items:center;gap:11px}
+.mini-cover{width:43px;height:43px;object-fit:cover;border-radius:8px;background:#333}
+.now-info{min-width:0;flex:1}
+.now-title{font-size:13px;font-weight:750;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.now-artist{font-size:11px;color:#aaa;margin-top:3px}
+.player-controls{display:flex;align-items:center;gap:9px}
+.progress{width:100%;height:4px;accent-color:#eee;margin:11px 0 3px}
+.time{display:flex;justify-content:space-between;font-size:10px;color:#aaa}
+dialog{
+  width:min(90%,480px);background:#1b1b1b;color:#eee;
+  border:1px solid #444;border-radius:17px;padding:20px
+}
+dialog::backdrop{background:#000b}
+.lyrics{white-space:pre-wrap;line-height:2;color:#ccc;max-height:55vh;overflow:auto}
+@media(min-width:620px){
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  header{padding-left:7%;padding-right:7%}
+  main{padding-left:7%;padding-right:7%}
+}
+@media(min-width:900px){
+  .grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .hero{padding:38px}
 }
 </style>
 </head>
-
 <body>
-<header class="topbar">
-  <a href="#" class="logo" style="text-decoration:none">NOVA<span> MUSIC</span></a>
-  <form class="search" id="searchForm">
-    <input id="searchInput" placeholder="ابحث عن أغنية أو فنان..." autocomplete="off">
-    <button class="btn primary" type="submit">بحث</button>
-  </form>
-  <button class="btn" id="pickTop">＋ MP3</button>
+<header>
+  <div class="top">
+    <div>
+      <div class="brand">NOVA <span>MUSIC</span></div>
+      <div class="tagline">مساحتك لاكتشاف الموسيقى</div>
+    </div>
+    <button class="icon-btn" id="reload" aria-label="تحديث المحتوى">↻</button>
+  </div>
+  <div class="search">
+    <input id="search" type="search" placeholder="ابحث عن أغنية أو فنان..." aria-label="بحث">
+  </div>
 </header>
 
-<div class="layout">
-  <aside class="sidebar">
-    <button class="navbtn active" data-view="home">⌂ الرئيسية</button>
-    <button class="navbtn" data-view="trending">↗ الرائج</button>
-    <button class="navbtn" data-view="favorites">♡ المفضلة</button>
-    <button class="navbtn" data-view="history">◷ سجل الاستماع</button>
-    <button class="navbtn" data-view="local">♫ ملفات هاتفي</button>
-    <button class="navbtn" data-view="playlists">▤ قوائم التشغيل</button>
-    <div class="navtitle">مكتشف الموسيقى</div>
-    <button class="navbtn" data-query="Arabic pop">بوب عربي</button>
-    <button class="navbtn" data-query="Iraqi music">عراقي</button>
-    <button class="navbtn" data-query="Khaleeji music">خليجي</button>
-    <button class="navbtn" data-query="Egyptian music">مصري</button>
-    <button class="navbtn" data-query="Arabic rap">راب عربي</button>
-    <button class="navbtn" data-query="Arabic sad music">حزين ورومانسي</button>
-    <button class="navbtn" data-query="English pop">بوب عالمي</button>
-    <button class="navbtn" data-query="Hip Hop">Hip-Hop</button>
-    <button class="navbtn" data-query="K-pop">K-pop</button>
-    <button class="navbtn" data-query="Latin music">Latin</button>
-    <button class="navbtn" data-query="Rock music">Rock</button>
-    <button class="navbtn" data-query="Jazz">Jazz</button>
-    <button class="navbtn" data-query="Electronic music">Electronic</button>
-    <button class="navbtn" data-query="Lo-fi">Lo-fi</button>
-  </aside>
+<main>
+  <nav aria-label="التنقل الرئيسي">
+    <button class="active" data-view="home">الرئيسية</button>
+    <button data-view="all">كل الأغاني</button>
+    <button data-view="favorites">المفضلة ♡</button>
+    <button data-view="playlists">قوائم التشغيل</button>
+  </nav>
 
-  <main>
-    <section class="hero" id="hero">
-      <div class="eyebrow">YOUR SOUND. YOUR WORLD.</div>
-      <h1>عالم الموسيقى<br>بين يديك.</h1>
-      <p>اكتشف أصواتاً جديدة، ابحث عن موسيقاك المفضلة، وشغّل ملفاتك الخاصة. كل هذا في مكان واحد.</p>
-      <div class="hero-actions">
-        <button class="btn primary" id="discoverBtn">اكتشف الموسيقى</button>
-        <button class="btn" id="pickHero">اختيار ملفات MP3</button>
-      </div>
-    </section>
+  <section class="hero" id="hero">
+    <div class="eyebrow">YOUR MUSIC. YOUR SPACE.</div>
+    <h1>صوتك، على طريقتك.</h1>
+    <p>اكتشف الأغاني المنشورة، استمع إلى ما تحب، واجمع اختياراتك في مكان واحد.</p>
+    <button class="primary" id="explore">اكتشف الموسيقى ↓</button>
+  </section>
 
-    <section class="section">
-      <div class="section-head">
-        <div><h2 id="sectionTitle">اكتشف الموسيقى</h2>
-        <div class="sub" id="sectionSub">اختيارات موسيقية من Audius وملفاتك المحلية</div></div>
-        <button class="btn" id="refreshBtn">تحديث</button>
-      </div>
+  <section class="section" id="category-section">
+    <div class="section-head">
+      <div><h2>التصنيفات</h2><div class="sub">اختر المزاج الذي يناسبك</div></div>
+    </div>
+    <div class="chips" id="categories"></div>
+  </section>
 
-      <div class="chips">
-        <button class="chip active" data-query="trending">الرائج</button>
-        <button class="chip" data-query="Arabic music">عربي</button>
-        <button class="chip" data-query="Iraqi music">عراقي</button>
-        <button class="chip" data-query="Khaleeji music">خليجي</button>
-        <button class="chip" data-query="Egyptian music">مصري</button>
-        <button class="chip" data-query="Arabic rap">راب عربي</button>
-        <button class="chip" data-query="English pop">عالمي</button>
-        <button class="chip" data-query="Hip Hop">Hip-Hop</button>
-        <button class="chip" data-query="K-pop">K-pop</button>
-        <button class="chip" data-query="Latin music">Latin</button>
-        <button class="chip" data-query="Rock music">Rock</button>
-        <button class="chip" data-query="Jazz">Jazz</button>
-        <button class="chip" data-query="Electronic music">Electronic</button>
-        <button class="chip" data-query="Lo-fi">Lo-fi</button>
-      </div>
+  <section class="section" id="playlist-section">
+    <div class="section-head">
+      <div><h2>قوائم التشغيل</h2><div class="sub">مجموعاتك الموسيقية</div></div>
+    </div>
+    <div class="grid" id="playlists"></div>
+  </section>
 
-      <div class="status" id="status">جارٍ تحميل الموسيقى...</div>
-      <div class="grid" id="tracksGrid"></div>
-      <div class="empty" id="empty" hidden>لا توجد نتائج لعرضها حالياً.</div>
-    </section>
+  <section class="section" id="track-section">
+    <div class="section-head">
+      <div><h2 id="track-heading">أحدث الأغاني</h2><div class="sub" id="track-sub">اختيارات من مكتبة NOVA</div></div>
+    </div>
+    <div class="grid" id="tracks"></div>
+  </section>
+  <div class="status" id="status" role="status" aria-live="polite">جارٍ تحميل الموسيقى...</div>
+</main>
 
-    <section class="section" id="playlistSection" hidden>
-      <div class="section-head"><h2>قوائم التشغيل</h2></div>
-      <div class="modalrow">
-        <input class="btn" id="playlistName" placeholder="اسم القائمة الجديدة">
-        <button class="btn primary" id="createPlaylist">إنشاء قائمة</button>
-      </div>
-      <div id="playlistList" style="margin-top:16px"></div>
-    </section>
-
-    <footer class="footer">
-      <div class="brand">NOVA<span> MUSIC</span></div>
-      <p>Crafted with care by <strong style="color:white">abbas</strong></p>
-      <div class="socials">
-        <a href="https://www.instagram.com/977ov?psln=MWxoMXE4dDJ1bzk4dg==" target="_blank" rel="noopener noreferrer">◎ Instagram</a>
-        <a href="https://www.tiktok.com/@vv66t?_r=1&_t=ZS-9AaKzRcdkM1" target="_blank" rel="noopener noreferrer">♪ TikTok</a>
-      </div>
-      <p>© 2026 <strong>NOVA Music</strong>. All rights reserved.</p>
-      <p class="legal">حقوق الأغاني والتسجيلات تعود إلى أصحابها. تُعرض الموسيقى من مصادرها المتاحة، ويجب احترام شروط الترخيص الخاصة بكل عمل. ملفات MP3 التي تختارها تبقى على جهازك.</p>
-    </footer>
-  </main>
-</div>
+<footer>NOVA MUSIC · استمع باكتشاف جديد كل مرة</footer>
 
 <div class="player">
   <div class="player-inner">
     <div class="now">
-      <div class="now-cover" id="nowCover">♫</div>
+      <img class="mini-cover" id="player-cover" alt="" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='50' height='50'%3E%3Crect width='100%25' height='100%25' fill='%23333'/%3E%3C/svg%3E">
       <div class="now-info">
-        <strong id="nowTitle">اختر أغنية لتبدأ</strong>
-        <small id="nowArtist">NOVA Music</small>
+        <div class="now-title" id="player-title">اختر أغنية للاستماع</div>
+        <div class="now-artist" id="player-artist">NOVA Music</div>
       </div>
-      <button class="iconbtn" id="likeNow" title="إضافة للمفضلة">♡</button>
-    </div>
-
-    <div class="controls">
-      <div class="control-buttons">
-        <button class="iconbtn" id="shuffleBtn" title="عشوائي">⤨</button>
-        <button class="iconbtn" id="prevBtn" title="السابق">⏮</button>
-        <button class="iconbtn big" id="playBtn" title="تشغيل">▶</button>
-        <button class="iconbtn" id="nextBtn" title="التالي">⏭</button>
-        <button class="iconbtn" id="repeatBtn" title="تكرار">↻</button>
-      </div>
-      <div class="timebar">
-        <span id="currentTime">0:00</span>
-        <input type="range" id="seek" min="0" max="1000" value="0">
-        <span id="duration">0:00</span>
+      <div class="player-controls">
+        <button class="icon-btn" id="prev" aria-label="الأغنية السابقة">|◀</button>
+        <button class="primary" id="toggle" aria-label="تشغيل أو إيقاف">▶</button>
+        <button class="icon-btn" id="next" aria-label="الأغنية التالية">▶|</button>
       </div>
     </div>
-
-    <div class="volume">
-      <span>🔊</span>
-      <input type="range" id="volume" min="0" max="1" step=".01" value=".8">
-    </div>
+    <input class="progress" id="progress" type="range" min="0" max="100" value="0" aria-label="موضع التشغيل">
+    <div class="time"><span id="current-time">0:00</span><span id="duration">0:00</span></div>
   </div>
 </div>
 
-<input type="file" id="fileInput" accept="audio/*,.mp3,.m4a,.wav,.ogg" multiple>
-<audio id="audio" preload="metadata"></audio>
+<dialog id="lyrics-dialog">
+  <div class="section-head"><h2 id="lyrics-title">كلمات الأغنية</h2><button class="icon-btn" id="close-lyrics">✕</button></div>
+  <div class="lyrics" id="lyrics-content"></div>
+</dialog>
+
+<audio id="audio" preload="metadata" crossorigin="anonymous"></audio>
 
 <script>
 (() => {
-"use strict";
+  const SUPABASE_URL = "https://xpwhauincfxreytilrda.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_Mopifty7o0Sg6hFHi6CoKg_mp6RxV-s";
+  const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const $ = id => document.getElementById(id);
+  const audio = $("audio");
+  let tracks = [], categories = [], playlists = [], playlistTracks = [];
+  let view = "home", categoryId = null, activePlaylist = null, current = null;
+  let currentList = [];
+  let favorites = [];
+  try { favorites = JSON.parse(localStorage.getItem("nova-favorites") || "[]"); } catch {}
 
-const API = "https://api.audius.co/v1";
-const APP_NAME = "NOVA_Music";
-const $ = id => document.getElementById(id);
-const audio = $("audio");
-
-let tracks = [];
-let queue = [];
-let queueIndex = -1;
-let currentTrack = null;
-let currentView = "home";
-let currentQuery = "trending";
-let localTracks = [];
-let objectUrls = [];
-let shuffle = false;
-let repeat = false;
-let playlists = load("nova_playlists", []);
-let favorites = load("nova_favorites", []);
-let history = load("nova_history", []);
-
-function load(key, fallback) {
-  try { return JSON.parse(localStorage.getItem(key)) || fallback; }
-  catch { return fallback; }
-}
-function save(key, value) {
-  try { localStorage.setItem(key, JSON.stringify(value)); }
-  catch {}
-}
-function toast(message) {
-  const old = document.querySelector(".toast");
-  if (old) old.remove();
-  const el = document.createElement("div");
-  el.className = "toast";
-  el.textContent = message;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 2800);
-}
-function esc(value) {
-  return String(value ?? "").replace(/[&<>"']/g, c => ({
+  const safe = value => String(value ?? "");
+  const escapeHTML = value => safe(value).replace(/[&<>"']/g, ch => ({
     "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
-  })[c]);
-}
-function imageOf(t) {
-  return t?.artwork?.["480x480"] || t?.artwork?.["150x150"] ||
-         t?.artwork?.["1000x1000"] || "";
-}
-function normalize(t) {
-  return {
-    id: String(t.id),
-    title: t.title || "Untitled",
-    artist: t.user?.name || t.artist || "Unknown artist",
-    artwork: imageOf(t),
-    duration: Number(t.duration || 0),
-    source: "audius",
-    permalink: t.permalink || "",
-    raw: t
+  })[ch]);
+  const setStatus = (message, error = false) => {
+    $("status").textContent = message;
+    $("status").className = "status" + (error ? " error" : "");
   };
-}
-function getTrack(id) {
-  return [...tracks, ...localTracks, ...history].find(t => t.id === String(id));
-}
-function isLiked(t) {
-  return favorites.some(f => f.id === t.id);
-}
-function formatTime(seconds) {
-  if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
-  const m = Math.floor(seconds / 60);
-  const s = Math.floor(seconds % 60);
-  return `${m}:${String(s).padStart(2, "0")}`;
-}
-function placeholder() {
-  return '<div class="cover-placeholder">♫</div>';
-}
-function trackCard(t) {
-  const liked = isLiked(t);
-  const cover = t.artwork
-    ? `<img src="${esc(t.artwork)}" alt="" loading="lazy" onerror="this.style.display='none'">`
-    : placeholder();
-  return `<article class="track">
-    <div class="cover">${cover}
-      <button class="playcover" data-play="${esc(t.id)}" aria-label="تشغيل">▶</button>
-    </div>
-    <h3 title="${esc(t.title)}">${esc(t.title)}</h3>
-    <p title="${esc(t.artist)}">${esc(t.artist)}</p>
-    <div class="track-actions">
-      <button data-play="${esc(t.id)}">▶ تشغيل</button>
-      <button class="${liked ? "liked" : ""}" data-like="${esc(t.id)}">${liked ? "♥" : "♡"} حفظ</button>
-    </div>
-  </article>`;
-}
-function render(list) {
-  tracks = list;
-  const grid = $("tracksGrid");
-  grid.innerHTML = list.map(trackCard).join("");
-  $("empty").hidden = list.length > 0;
-  if (!list.length) grid.innerHTML = "";
-}
-async function api(path) {
-  const url = `${API}${path}${path.includes("?") ? "&" : "?"}app_name=${APP_NAME}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error("تعذر الاتصال بمصدر الموسيقى");
-  const json = await res.json();
-  if (json.data == null) throw new Error(json.message || "لم تصل بيانات الموسيقى");
-  return json.data;
-}
-async function searchMusic(query) {
-  currentQuery = query;
-  currentView = "search";
-  $("sectionTitle").textContent = query === "trending" ? "الأغاني الرائجة" : `نتائج: ${query}`;
-  $("sectionSub").textContent = "الموسيقى المتاحة عبر Audius";
-  $("status").textContent = "جارٍ البحث...";
-  $("playlistSection").hidden = true;
-  try {
-    let data;
-    if (query === "trending") data = await api("/tracks/trending?limit=24");
-    else data = await api(`/tracks/search?query=${encodeURIComponent(query)}&limit=24`);
-    const list = data.map(normalize);
-    tracks = list;
-    $("status").textContent = `${list.length} نتيجة`;
-    render(list);
-  } catch (e) {
-    render([]);
-    $("status").textContent = "تعذر تحميل الموسيقى. تحقق من الإنترنت وحاول مجدداً.";
-    toast("لم نتمكن من الاتصال بمصدر الموسيقى");
+  const fmt = seconds => {
+    if (!Number.isFinite(seconds)) return "0:00";
+    return Math.floor(seconds / 60) + ":" + String(Math.floor(seconds % 60)).padStart(2,"0");
+  };
+  const art = url => url
+    ? `<img class="cover" loading="lazy" src="${escapeHTML(url)}" alt="غلاف الأغنية" onerror="this.outerHTML='<div class=cover-placeholder>♫</div>'">`
+    : `<div class="cover-placeholder">♫</div>`;
+
+  async function loadData() {
+    setStatus("جارٍ تحميل الموسيقى...");
+    try {
+      const results = await Promise.all([
+        db.from("tracks").select("*").eq("is_published", true).order("created_at", {ascending:false}),
+        db.from("categories").select("*").eq("is_active", true).order("name"),
+        db.from("playlists").select("*").eq("is_published", true).order("id", {ascending:false}),
+        db.from("playlist_tracks").select("playlist_id,track_id,position").order("position")
+      ]);
+      for (const r of results) if (r.error) throw r.error;
+      tracks = results[0].data || [];
+      categories = results[1].data || [];
+      playlists = results[2].data || [];
+      playlistTracks = results[3].data || [];
+      renderCategories();
+      renderPlaylists();
+      renderTracks();
+      setStatus(tracks.length ? `تم تحميل ${tracks.length} أغنية.` : "الموقع جاهز، لكن لا توجد أغاني منشورة بعد.");
+    } catch (err) {
+      console.error(err);
+      setStatus("تعذّر تحميل البيانات: " + (err.message || "خطأ غير معروف"), true);
+      $("tracks").innerHTML = `<div class="empty">لم نتمكن من تحميل المكتبة. تأكد من اتصال الإنترنت وصلاحيات القراءة العامة في Supabase.</div>`;
+    }
   }
-}
-function displayView(view) {
-  currentView = view;
-  document.querySelectorAll(".navbtn").forEach(b =>
-    b.classList.toggle("active", b.dataset.view === view));
-  $("playlistSection").hidden = view !== "playlists";
-  $("hero").hidden = !["home","trending"].includes(view);
-  if (view === "home" || view === "trending") {
-    searchMusic("trending");
-    return;
+
+  function renderCategories() {
+    const items = [{id:null,name:"الكل"}, ...categories];
+    $("categories").innerHTML = items.map(c =>
+      `<button class="chip ${categoryId === c.id ? "active" : ""}" data-category="${c.id === null ? "" : escapeHTML(c.id)}">${escapeHTML(c.name)}</button>`
+    ).join("");
+    $("categories").querySelectorAll("button").forEach(btn => btn.addEventListener("click", () => {
+      categoryId = btn.dataset.category === "" ? null : Number(btn.dataset.category);
+      activePlaylist = null;
+      renderCategories();
+      renderTracks();
+      $("track-section").scrollIntoView({behavior:"smooth",block:"start"});
+    }));
   }
-  let list = [];
-  if (view === "favorites") {
-    $("sectionTitle").textContent = "المفضلة";
-    list = favorites.map(f => getTrack(f.id) || f);
-  } else if (view === "history") {
-    $("sectionTitle").textContent = "سجل الاستماع";
-    list = history;
-  } else if (view === "local") {
-    $("sectionTitle").textContent = "ملفات هاتفك";
-    list = localTracks;
-  } else if (view === "playlists") {
-    $("sectionTitle").textContent = "قوائم التشغيل";
-    $("sectionSub").textContent = "أنشئ قوائمك وأضف إليها الأغاني";
-    renderPlaylistList();
-    render([]);
-    $("status").textContent = "";
-    return;
-  }
-  $("sectionSub").textContent = "المحفوظ على هذا الجهاز";
-  tracks = list;
-  $("status").textContent = `${list.length} عنصر`;
-  render(list);
-}
-function toggleFavorite(t) {
-  if (isLiked(t)) favorites = favorites.filter(f => f.id !== t.id);
-  else favorites.unshift({id:t.id,title:t.title,artist:t.artist,artwork:t.artwork,
-    source:t.source,permalink:t.permalink});
-  save("nova_favorites", favorites);
-  if (currentTrack?.id === t.id) $("likeNow").textContent = isLiked(t) ? "♥" : "♡";
-  if (["favorites"].includes(currentView)) displayView("favorites");
-  else render(tracks);
-}
-function addHistory(t) {
-  history = [t, ...history.filter(x => x.id !== t.id)].slice(0, 60);
-  save("nova_history", history.map(x => ({
-    id:x.id,title:x.title,artist:x.artist,artwork:x.artwork,
-    source:x.source,permalink:x.permalink
-  })));
-}
-async function playTrack(t, list = tracks) {
-  if (!t) return;
-  if (t.source === "local") {
-    currentTrack = t;
-    queue = list.length ? list : [t];
-    queueIndex = Math.max(0, queue.findIndex(x => x.id === t.id));
-    audio.src = t.url;
-  } else {
-    currentTrack = t;
-    queue = list.length ? list : [t];
-    queueIndex = Math.max(0, queue.findIndex(x => x.id === t.id));
-    audio.src = `${API}/tracks/${encodeURIComponent(t.id)}/stream?app_name=${APP_NAME}`;
-  }
-  $("nowTitle").textContent = t.title;
-  $("nowArtist").textContent = t.artist;
-  $("nowCover").innerHTML = t.artwork
-    ? `<img src="${esc(t.artwork)}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:9px">`
-    : "♫";
-  $("likeNow").textContent = isLiked(t) ? "♥" : "♡";
-  $("currentTime").textContent = "0:00";
-  $("duration").textContent = formatTime(t.duration);
-  $("seek").value = 0;
-  addHistory(t);
-  try {
-    await audio.play();
-    $("playBtn").textContent = "Ⅱ";
-  } catch {
-    $("playBtn").textContent = "▶";
-    toast("تعذر التشغيل. جرّب أغنية أخرى أو تحقق من الاتصال.");
-  }
-}
-function playById(id) {
-  const t = getTrack(id);
-  if (t) playTrack(t, tracks.length ? tracks : [t]);
-}
-function nextTrack(direction = 1) {
-  if (!queue.length) return;
-  if (shuffle && queue.length > 1) {
-    let next = queueIndex;
-    while (next === queueIndex) next = Math.floor(Math.random() * queue.length);
-    queueIndex = next;
-  } else {
-    queueIndex += direction;
-    if (queueIndex >= queue.length) queueIndex = repeat ? 0 : -1;
-    if (queueIndex < 0) queueIndex = queue.length - 1;
-  }
-  if (queueIndex >= 0) playTrack(queue[queueIndex], queue);
-  else {
-    audio.pause();
-    $("playBtn").textContent = "▶";
-  }
-}
-async function submitSearch(event) {
-  event?.preventDefault();
-  const q = $("searchInput").value.trim();
-  if (!q) return toast("اكتب اسم أغنية أو فنان");
-  await searchMusic(q);
-}
-function renderPlaylistList() {
-  const target = $("playlistList");
-  if (!playlists.length) {
-    target.innerHTML = '<div class="empty">لا توجد قوائم بعد. أنشئ قائمتك الأولى.</div>';
-    return;
-  }
-  target.innerHTML = playlists.map((p,i) => `
-    <div class="track" style="margin:10px 0;display:flex;align-items:center;gap:12px">
-      <div style="font-size:25px">▤</div>
-      <div style="flex:1;min-width:0">
-        <strong>${esc(p.name)}</strong>
-        <p style="color:#999;font-size:12px">${p.items.length} أغنية</p>
-      </div>
-      <button class="btn" data-openlist="${i}">فتح</button>
-      <button class="btn" data-deletelist="${i}">حذف</button>
-    </div>`).join("");
-}
-function createPlaylist() {
-  const name = $("playlistName").value.trim();
-  if (!name) return toast("اكتب اسم القائمة");
-  playlists.push({name, items:[]});
-  save("nova_playlists", playlists);
-  $("playlistName").value = "";
-  renderPlaylistList();
-  toast("تم إنشاء القائمة");
-}
-function addCurrentToPlaylist() {
-  if (!currentTrack) return toast("شغّل أغنية أولاً");
-  if (!playlists.length) {
-    const name = prompt("اكتب اسم قائمة التشغيل الجديدة:");
-    if (!name?.trim()) return;
-    playlists.push({name:name.trim(),items:[]});
-  }
-  let choice;
-  if (playlists.length === 1) choice = 0;
-  else {
-    const menu = playlists.map((p,i) => `${i+1}. ${p.name}`).join("\n");
-    const answer = prompt("اختر رقم القائمة:\n" + menu);
-    choice = Number(answer) - 1;
-  }
-  if (choice < 0 || choice >= playlists.length || !Number.isInteger(choice)) return;
-  const t = currentTrack;
-  if (!playlists[choice].items.some(x => x.id === t.id)) {
-    playlists[choice].items.push({
-      id:t.id,title:t.title,artist:t.artist,artwork:t.artwork,
-      source:t.source,permalink:t.permalink
+
+  function renderPlaylists() {
+    const target = $("playlists");
+    if (!playlists.length) {
+      target.innerHTML = `<div class="empty">ستظهر هنا قوائم التشغيل المنشورة من لوحة الإدارة.</div>`;
+      return;
+    }
+    target.innerHTML = playlists.map(p => `
+      <article class="card playlist-card" tabindex="0" role="button" data-playlist="${escapeHTML(p.id)}">
+        ${p.cover_url ? art(p.cover_url) : `<div class="cover-placeholder">♫</div>`}
+        <div class="card-body">
+          <div class="track-title">${escapeHTML(p.name)}</div>
+          <div class="artist">${escapeHTML(p.description || "قائمة من NOVA Music")}</div>
+        </div>
+      </article>`).join("");
+    target.querySelectorAll("[data-playlist]").forEach(el => {
+      const open = () => {
+        activePlaylist = Number(el.dataset.playlist);
+        categoryId = null;
+        view = "all";
+        document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b.dataset.view === "all"));
+        renderCategories();
+        renderTracks();
+        $("track-section").scrollIntoView({behavior:"smooth"});
+      };
+      el.addEventListener("click", open);
+      el.addEventListener("keydown", e => { if (e.key === "Enter") open(); });
     });
   }
-  save("nova_playlists", playlists);
-  renderPlaylistList();
-  toast("تمت إضافة الأغنية إلى القائمة");
-}
 
-$("searchForm").addEventListener("submit", submitSearch);
-$("discoverBtn").addEventListener("click", () => {
-  $("searchInput").focus();
-  searchMusic("trending");
-});
-$("refreshBtn").addEventListener("click", () => {
-  if (currentView === "home" || currentView === "trending" || currentView === "search")
-    searchMusic(currentQuery);
-  else displayView(currentView);
-});
-document.querySelectorAll("[data-view]").forEach(b =>
-  b.addEventListener("click", () => displayView(b.dataset.view)));
-document.querySelectorAll("[data-query]").forEach(b =>
-  b.addEventListener("click", () => {
-    document.querySelectorAll(".chip").forEach(c => c.classList.remove("active"));
-    if (b.classList.contains("chip")) b.classList.add("active");
-    $("searchInput").value = "";
-    searchMusic(b.dataset.query);
+  function getVisibleTracks() {
+    let list = [...tracks];
+    const q = $("search").value.trim().toLowerCase();
+    if (q) list = list.filter(t => `${t.title} ${t.artist}`.toLowerCase().includes(q));
+    if (view === "favorites") list = list.filter(t => favorites.includes(t.id));
+    if (categoryId !== null) list = list.filter(t => t.category_id === categoryId);
+    if (activePlaylist !== null) {
+      const ids = playlistTracks.filter(x => x.playlist_id === activePlaylist)
+        .sort((a,b) => a.position - b.position).map(x => x.track_id);
+      list = ids.map(id => list.find(t => t.id === id)).filter(Boolean);
+    }
+    return list;
+  }
+
+  function renderTracks() {
+    const list = getVisibleTracks();
+    currentList = list;
+    const heading = view === "favorites" ? "الأغاني المفضلة" :
+      activePlaylist !== null ? (playlists.find(p => p.id === activePlaylist)?.name || "قائمة التشغيل") :
+      categoryId !== null ? (categories.find(c => c.id === categoryId)?.name || "الأغاني") :
+      view === "all" ? "كل الأغاني" : $("search").value.trim() ? "نتائج البحث" : "أحدث الأغاني";
+    $("track-heading").textContent = heading;
+    $("track-sub").textContent = `${list.length} أغنية`;
+    const target = $("tracks");
+    if (!list.length) {
+      target.innerHTML = `<div class="empty">لا توجد أغاني هنا حاليًا. أضف أغاني وانشرها من لوحة الإدارة، أو جرّب بحثًا آخر.</div>`;
+      return;
+    }
+    target.innerHTML = list.map(t => `
+      <article class="card">
+        ${art(t.cover_url)}
+        <div class="card-body">
+          <div class="track-title">${escapeHTML(t.title)}</div>
+          <div class="artist">${escapeHTML(t.artist || "فنان غير معروف")}</div>
+          <div class="actions">
+            <button class="play-btn" data-play="${escapeHTML(t.id)}">▶ استمع</button>
+            <button class="icon-btn" data-fav="${escapeHTML(t.id)}" aria-label="المفضلة">${favorites.includes(t.id) ? "♥" : "♡"}</button>
+            ${t.allow_download && t.audio_url ? `<button class="icon-btn" data-download="${escapeHTML(t.id)}" aria-label="تنزيل">↓</button>` : ""}
+          </div>
+          ${t.lyrics ? `<button class="icon-btn" style="width:100%;margin-top:8px" data-lyrics="${escapeHTML(t.id)}">عرض الكلمات</button>` : ""}
+        </div>
+      </article>`).join("");
+
+    target.querySelectorAll("[data-play]").forEach(b => b.addEventListener("click", () => playTrack(Number(b.dataset.play), list)));
+    target.querySelectorAll("[data-fav]").forEach(b => b.addEventListener("click", () => toggleFavorite(Number(b.dataset.fav))));
+    target.querySelectorAll("[data-download]").forEach(b => b.addEventListener("click", () => downloadTrack(Number(b.dataset.download))));
+    target.querySelectorAll("[data-lyrics]").forEach(b => b.addEventListener("click", () => showLyrics(Number(b.dataset.lyrics))));
+  }
+
+  async function playTrack(id, list = tracks) {
+    const track = tracks.find(t => t.id === id);
+    if (!track || !track.audio_url) {
+      setStatus("لا يوجد رابط صوت صالح لهذه الأغنية.", true);
+      return;
+    }
+    current = track;
+    currentList = list.length ? list : tracks;
+    audio.src = track.audio_url;
+    $("player-title").textContent = track.title;
+    $("player-artist").textContent = track.artist || "فنان غير معروف";
+    $("player-cover").src = track.cover_url || "";
+    $("toggle").textContent = "Ⅱ";
+    try {
+      await audio.play();
+      setStatus("يتم تشغيل: " + track.title);
+    } catch (err) {
+      $("toggle").textContent = "▶";
+      setStatus("تعذّر تشغيل الملف. تحقق من رابط الصوت وصلاحياته.", true);
+    }
+  }
+
+  function toggleFavorite(id) {
+    favorites = favorites.includes(id) ? favorites.filter(x => x !== id) : [...favorites,id];
+    localStorage.setItem("nova-favorites", JSON.stringify(favorites));
+    renderTracks();
+  }
+
+  async function downloadTrack(id) {
+    const track = tracks.find(t => t.id === id);
+    if (!track || !track.allow_download || !track.audio_url) {
+      setStatus("التنزيل غير متاح لهذه الأغنية.", true);
+      return;
+    }
+    setStatus("جارٍ تجهيز التنزيل...");
+    try {
+      const response = await fetch(track.audio_url);
+      if (!response.ok) throw new Error("تعذر جلب الملف");
+      const blob = await response.blob();
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = (track.title || "nova-track").replace(/[\\/:*?"<>|]/g, "_") + ".mp3";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 30000);
+      setStatus("بدأ تنزيل الملف.");
+    } catch (err) {
+      setStatus("الخادم لا يسمح بالتنزيل المباشر من هذا الرابط. جرّب رابط ملف يدعم CORS أو استضافة الملفات في Supabase Storage.", true);
+    }
+  }
+
+  function showLyrics(id) {
+    const t = tracks.find(x => x.id === id);
+    if (!t) return;
+    $("lyrics-title").textContent = t.title;
+    $("lyrics-content").textContent = t.lyrics || "لا توجد كلمات مضافة.";
+    $("lyrics-dialog").showModal();
+  }
+
+  document.querySelectorAll("nav button").forEach(btn => btn.addEventListener("click", () => {
+    view = btn.dataset.view;
+    categoryId = null;
+    activePlaylist = null;
+    document.querySelectorAll("nav button").forEach(b => b.classList.toggle("active", b === btn));
+    renderCategories();
+    renderTracks();
+    if (view === "playlists") $("playlist-section").scrollIntoView({behavior:"smooth"});
+    else $("track-section").scrollIntoView({behavior:"smooth"});
   }));
-$("tracksGrid").addEventListener("click", e => {
-  const play = e.target.closest("[data-play]");
-  const like = e.target.closest("[data-like]");
-  if (play) playById(play.dataset.play);
-  if (like) {
-    const t = getTrack(like.dataset.like);
-    if (t) toggleFavorite(t);
-  }
-});
-$("likeNow").addEventListener("click", () => {
-  if (currentTrack) toggleFavorite(currentTrack);
-  else toast("اختر أغنية أولاً");
-});
-$("playBtn").addEventListener("click", async () => {
-  if (!audio.src) {
-    if (tracks.length) playTrack(tracks[0], tracks);
-    else toast("اختر أغنية أولاً");
-  } else if (audio.paused) {
-    try { await audio.play(); } catch { toast("تعذر التشغيل"); }
-  } else audio.pause();
-});
-$("nextBtn").addEventListener("click", () => nextTrack(1));
-$("prevBtn").addEventListener("click", () => {
-  if (audio.currentTime > 3) audio.currentTime = 0;
-  else nextTrack(-1);
-});
-$("shuffleBtn").addEventListener("click", () => {
-  shuffle = !shuffle;
-  $("shuffleBtn").style.color = shuffle ? "var(--accent)" : "";
-  toast(shuffle ? "التشغيل العشوائي مفعّل" : "التشغيل العشوائي متوقف");
-});
-$("repeatBtn").addEventListener("click", () => {
-  repeat = !repeat;
-  audio.loop = repeat;
-  $("repeatBtn").style.color = repeat ? "var(--accent)" : "";
-  toast(repeat ? "تكرار الأغنية مفعّل" : "التكرار متوقف");
-});
-audio.addEventListener("play", () => $("playBtn").textContent = "Ⅱ");
-audio.addEventListener("pause", () => $("playBtn").textContent = "▶");
-audio.addEventListener("ended", () => { if (!repeat) nextTrack(1); });
-audio.addEventListener("timeupdate", () => {
-  $("currentTime").textContent = formatTime(audio.currentTime);
-  if (Number.isFinite(audio.duration) && audio.duration > 0) {
-    $("duration").textContent = formatTime(audio.duration);
-    $("seek").value = Math.round(audio.currentTime / audio.duration * 1000);
-  }
-});
-$("seek").addEventListener("input", () => {
-  if (Number.isFinite(audio.duration) && audio.duration > 0)
-    audio.currentTime = Number($("seek").value) / 1000 * audio.duration;
-});
-$("volume").addEventListener("input", () => audio.volume = Number($("volume").value));
-audio.volume = .8;
 
-$("pickTop").addEventListener("click", () => $("fileInput").click());
-$("pickHero").addEventListener("click", () => $("fileInput").click());
-$("fileInput").addEventListener("change", e => {
-  const files = [...e.target.files].filter(f =>
-    f.type.startsWith("audio/") || /\.(mp3|m4a|wav|ogg|aac|flac)$/i.test(f.name));
-  if (!files.length) return toast("لم يتم اختيار ملفات صوتية");
-  files.forEach(file => {
-    const url = URL.createObjectURL(file);
-    objectUrls.push(url);
-    localTracks.push({
-      id:"local-" + Math.random().toString(36).slice(2),
-      title:file.name.replace(/\.[^.]+$/, ""),
-      artist:"ملف من هاتفك",artwork:"",source:"local",url,
-      duration:0
-    });
+  $("search").addEventListener("input", renderTracks);
+  $("reload").addEventListener("click", loadData);
+  $("explore").addEventListener("click", () => $("track-section").scrollIntoView({behavior:"smooth"}));
+  $("close-lyrics").addEventListener("click", () => $("lyrics-dialog").close());
+  $("toggle").addEventListener("click", async () => {
+    if (!current) {
+      if (tracks.length) await playTrack(tracks[0].id, tracks);
+      return;
+    }
+    if (audio.paused) {
+      try { await audio.play(); } catch { setStatus("تعذّر تشغيل هذه الأغنية.", true); }
+    } else audio.pause();
   });
-  toast(`تمت إضافة ${files.length} ملف صوتي`);
-  displayView("local");
-  e.target.value = "";
-});
-$("createPlaylist").addEventListener("click", createPlaylist);
-$("playlistList").addEventListener("click", e => {
-  const open = e.target.closest("[data-openlist]");
-  const del = e.target.closest("[data-deletelist]");
-  if (del) {
-    playlists.splice(Number(del.dataset.deletelist), 1);
-    save("nova_playlists", playlists);
-    renderPlaylistList();
-    return;
-  }
-  if (open) {
-    const p = playlists[Number(open.dataset.openlist)];
-    if (!p) return;
-    $("sectionTitle").textContent = p.name;
-    $("sectionSub").textContent = "قائمة التشغيل";
-    const list = p.items.map(item => getTrack(item.id) || item);
-    tracks = list;
-    render(list);
-    $("playlistSection").hidden = true;
-    $("status").textContent = `${list.length} أغنية`;
-    currentView = "playlist";
-  }
-});
+  $("prev").addEventListener("click", () => {
+    if (!currentList.length || !current) return;
+    const i = currentList.findIndex(t => t.id === current.id);
+    playTrack(currentList[(i - 1 + currentList.length) % currentList.length].id, currentList);
+  });
+  $("next").addEventListener("click", () => {
+    if (!currentList.length || !current) return;
+    const i = currentList.findIndex(t => t.id === current.id);
+    playTrack(currentList[(i + 1) % currentList.length].id, currentList);
+  });
+  audio.addEventListener("play", () => $("toggle").textContent = "Ⅱ");
+  audio.addEventListener("pause", () => $("toggle").textContent = "▶");
+  audio.addEventListener("ended", () => {
+    if (currentList.length > 1 && current) {
+      const i = currentList.findIndex(t => t.id === current.id);
+      playTrack(currentList[(i + 1) % currentList.length].id, currentList);
+    }
+  });
+  audio.addEventListener("timeupdate", () => {
+    $("current-time").textContent = fmt(audio.currentTime);
+    $("duration").textContent = fmt(audio.duration);
+    $("progress").value = audio.duration ? audio.currentTime / audio.duration * 100 : 0;
+  });
+  $("progress").addEventListener("input", () => {
+    if (audio.duration) audio.currentTime = Number($("progress").value) / 100 * audio.duration;
+  });
 
-// إضافة الأغنية الحالية إلى قائمة من خلال زر عنوان المشغل.
-$("nowTitle").title = "اضغط لإضافة الأغنية إلى قائمة تشغيل";
-$("nowTitle").style.cursor = "pointer";
-$("nowTitle").addEventListener("click", addCurrentToPlaylist);
-
-searchMusic("trending");
+  loadData();
 })();
 </script>
 </body>
-</html>
+  </html>
